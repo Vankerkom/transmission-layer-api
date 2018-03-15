@@ -1,0 +1,4 @@
+# Transmission Configuration
+transmission.url=http://transmission:9091/transmission/rpc
+transmission.username=transmission
+transmission.password=transmission
