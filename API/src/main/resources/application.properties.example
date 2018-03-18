@@ -1,3 +1,10 @@
+# Database Configuration
+spring.datasource.driverclassName=org.mariadb.jdbc.Driver
+spring.datasource.url=jdbc:mariadb://localhost:3306/transmission-layer
+spring.datasource.username=
+spring.datasource.password=
+spring.jpa.hibernate.ddl-auto=update
+
 # Transmission Configuration
 transmission.url=http://transmission:9091/transmission/rpc
 transmission.username=transmission

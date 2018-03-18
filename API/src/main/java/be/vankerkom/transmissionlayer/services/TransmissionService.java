@@ -1,5 +1,6 @@
 package be.vankerkom.transmissionlayer.services;
 
+import be.vankerkom.transmissionlayer.models.dto.TransmissionRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.tomcat.util.codec.binary.Base64;
@@ -11,7 +12,6 @@ import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.Map;
@@ -31,39 +31,6 @@ public class TransmissionService {
     private String resourcePassword;
 
     private String sessionId;
-
-    // TODO Move
-    private class TransmissionRequest implements Serializable {
-        private String method;
-        private Map<String, Object> arguments;
-        private Integer tag;
-
-        TransmissionRequest(String method, Map<String, Object> arguments) {
-            this.method = method;
-            this.arguments = arguments;
-        }
-
-        public String getMethod() {
-            return method;
-        }
-
-        public Map<String, Object> getArguments() {
-            return arguments;
-        }
-
-        public Integer getTag() {
-            return tag;
-        }
-    }
-
-    // TODO Move
-    private class TransmissionResponse {
-        private String result;
-
-        private Object arguments;
-        private int tag;
-
-    }
 
     // TODO Move
     private class MyResponseErrorHandler implements ResponseErrorHandler {
@@ -98,7 +65,7 @@ public class TransmissionService {
                 String.class
         );
 
-        LOG.debug("Status Code: " + response.getStatusCode());
+        LOG.debug("Method: " + method + ", Response Status Code: " + response.getStatusCode());
 
         // Validate if the session id is invalid.
         if (response.getStatusCode() == HttpStatus.CONFLICT) {
