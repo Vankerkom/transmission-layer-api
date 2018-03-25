@@ -2,6 +2,8 @@ package be.vankerkom.transmissionlayer.controllers;
 
 import be.vankerkom.transmissionlayer.services.TorrentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,8 +16,14 @@ public class TorrentController {
     private TorrentService torrentService;
 
     @GetMapping(produces = "application/json")
-    public String index() {
-        return torrentService.getTorrents();
+    public ResponseEntity index() {
+        Object results = torrentService.getTorrents();
+
+        if (results != null) {
+            return ResponseEntity.ok(results);
+        }
+
+        return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
 
 }

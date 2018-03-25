@@ -1,5 +1,7 @@
 package be.vankerkom.transmissionlayer;
 
+import com.google.gson.Gson;
+import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +23,18 @@ public class Application {
                         allowedOrigins("http://localhost:4200");
             }
         };
+    }
+
+    @Bean
+    public Gson gson() {
+        return new Gson();
+    }
+
+    @Bean
+    public ModelMapper modelMapper() {
+        final ModelMapper modelMapper = new ModelMapper();
+
+        return modelMapper;
     }
 
     public static void main(String[] args) {

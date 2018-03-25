@@ -1,12 +1,17 @@
 package be.vankerkom.transmissionlayer.services;
 
 import be.vankerkom.transmissionlayer.models.dto.TransmissionRequest;
+import be.vankerkom.transmissionlayer.models.dto.TransmissionResponse;
+import com.google.gson.Gson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
@@ -14,7 +19,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.Charset;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class TransmissionService {
@@ -31,6 +36,9 @@ public class TransmissionService {
     private String resourcePassword;
 
     private String sessionId;
+
+    @Autowired
+    private Gson gson;
 
     // TODO Move
     private class MyResponseErrorHandler implements ResponseErrorHandler {
@@ -51,11 +59,11 @@ public class TransmissionService {
         }
     }
 
-    public String getResource(String method) {
+    public TransmissionResponse getResource(String method) {
         return this.getResource(method, null);
     }
 
-    public String getResource(String method, Map<String, Object> arguments) {
+    public TransmissionResponse getResource(String method, Map<String, Object> arguments) {
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
 
@@ -76,7 +84,8 @@ public class TransmissionService {
             return getResource(method, arguments);
         }
 
-        return response.getBody();
+        // If only transmission set the correct response headers...
+        return gson.fromJson(response.getBody(), TransmissionResponse.class);
     }
 
     private HttpHeaders createHeaders() {
@@ -86,6 +95,8 @@ public class TransmissionService {
             String authHeader = "Basic " + new String(encodedAuth);
             set("Authorization", authHeader);
             set("X-Transmission-Session-Id", sessionId);
+            set("Accept", "application/json");
+            set("Content-Type", "application/json");
         }};
     }
 

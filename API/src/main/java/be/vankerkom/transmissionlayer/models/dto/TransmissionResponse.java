@@ -17,6 +17,10 @@ public class TransmissionResponse implements Serializable {
         return result;
     }
 
+    public boolean isSuccess() {
+        return this.getResult().equalsIgnoreCase("success");
+    }
+
     public void setResult(String result) {
         this.result = result;
     }
