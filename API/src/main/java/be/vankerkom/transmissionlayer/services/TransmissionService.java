@@ -59,6 +59,16 @@ public class TransmissionService {
         }
     }
 
+    public Object getSession() {
+        TransmissionResponse response = getResource("session-get");
+
+        if (response.isSuccess()) {
+            return response.getArguments();
+        }
+
+        return null;
+    }
+
     public TransmissionResponse getResource(String method) {
         return this.getResource(method, null);
     }

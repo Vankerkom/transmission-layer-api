@@ -19,7 +19,7 @@ public class TorrentService {
     private ModelMapper modelMapper;
 
     public Object getTorrents() {
-        Map<String, Object> arguments = new HashMap<>();
+        final Map<String, Object> arguments = new HashMap<>();
 
         arguments.put("fields", new String[]{"id", "name", "status", "percentDone"});
 
