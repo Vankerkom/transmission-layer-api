@@ -3,7 +3,6 @@ package be.vankerkom.transmissionlayer.transmission;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.ResponseErrorHandler;
 
@@ -16,7 +15,7 @@ public class TransmissionResponseErrorHandler implements ResponseErrorHandler {
 
     @Override
     public boolean hasError(ClientHttpResponse clientHttpResponse) throws IOException {
-        return clientHttpResponse.getStatusCode() == HttpStatus.UNAUTHORIZED;
+        return false;
     }
 
     @Override
