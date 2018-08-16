@@ -2,7 +2,6 @@ package be.vankerkom.transmissionlayer.services;
 
 import be.vankerkom.transmissionlayer.models.dto.TransmissionRequest;
 import be.vankerkom.transmissionlayer.models.dto.TransmissionResponse;
-import be.vankerkom.transmissionlayer.transmission.TransmissionResponseErrorHandler;
 import be.vankerkom.transmissionlayer.transmission.TransmissionSessionIdInterceptor;
 import com.google.gson.Gson;
 import org.apache.logging.log4j.LogManager;
@@ -38,7 +37,6 @@ public class TransmissionServiceImpl implements TransmissionService {
                 .setConnectTimeout(1000)
                 .setReadTimeout(1000)
                 .interceptors(new TransmissionSessionIdInterceptor())
-                .errorHandler(new TransmissionResponseErrorHandler())
                 .basicAuthorization(username, password)
                 .build();
 
@@ -59,18 +57,17 @@ public class TransmissionServiceImpl implements TransmissionService {
     }
 
     public TransmissionResponse getResource(String method, Map<String, Object> arguments) {
-        ResponseEntity<String> response = restTemplate.postForEntity(
+        ResponseEntity<TransmissionResponse> response = restTemplate.postForEntity(
                 resourceHost,
                 new TransmissionRequest(method, arguments),
-                String.class
+                TransmissionResponse.class
         );
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Method: {}, Response Status Code: {}", method, response.getStatusCode());
         }
 
-        // If only transmission set the correct response headers...
-        return gson.fromJson(response.getBody(), TransmissionResponse.class);
+        return response.getBody();
     }
 
 }
