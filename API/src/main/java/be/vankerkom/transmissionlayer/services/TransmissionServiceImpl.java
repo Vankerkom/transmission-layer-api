@@ -3,7 +3,6 @@ package be.vankerkom.transmissionlayer.services;
 import be.vankerkom.transmissionlayer.models.dto.TransmissionRequest;
 import be.vankerkom.transmissionlayer.models.dto.TransmissionResponse;
 import be.vankerkom.transmissionlayer.transmission.TransmissionSessionIdInterceptor;
-import com.google.gson.Gson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +21,6 @@ public class TransmissionServiceImpl implements TransmissionService {
 
     @Value("${transmission.url}")
     private String resourceHost;
-
-    @Autowired
-    private Gson gson;
 
     private RestTemplate restTemplate;
 
