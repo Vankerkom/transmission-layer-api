@@ -1,6 +1,6 @@
 package be.vankerkom.transmissionlayer.controllers;
 
-import be.vankerkom.transmissionlayer.models.dto.partials.SessionStatistics;
+import be.vankerkom.transmissionlayer.models.dto.partials.SessionStatisticsDto;
 import be.vankerkom.transmissionlayer.services.TransmissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +24,7 @@ public class SessionController {
 
     @GetMapping("/stats")
     public ResponseEntity getSessionStats() {
-        final SessionStatistics sessionStats = transmissionService.getSessionStats();
+        final SessionStatisticsDto sessionStats = transmissionService.getSessionStats();
 
         return ResponseEntity.ok(sessionStats);
     }

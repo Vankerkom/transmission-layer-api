@@ -1,10 +1,8 @@
 package be.vankerkom.transmissionlayer.services;
 
-import be.vankerkom.transmissionlayer.models.dto.TransmissionRequest;
-import be.vankerkom.transmissionlayer.models.dto.TransmissionResponse;
-import be.vankerkom.transmissionlayer.models.dto.TransmissionResponseGeneric;
-import be.vankerkom.transmissionlayer.models.dto.TransmissionResponseSessionStatistics;
-import be.vankerkom.transmissionlayer.models.dto.partials.SessionStatistics;
+import be.vankerkom.transmissionlayer.models.dto.*;
+import be.vankerkom.transmissionlayer.models.dto.partials.SessionStatisticsDto;
+import be.vankerkom.transmissionlayer.models.dto.partials.TorrentDto;
 import be.vankerkom.transmissionlayer.transmission.TransmissionSessionIdInterceptor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -51,8 +51,26 @@ public class TransmissionServiceImpl implements TransmissionService {
         return null;
     }
 
+    public List<TorrentDto> getTorrents(final List<String> fields) {
+        final GetTorrentsRequest request = new GetTorrentsRequest(fields);
+
+        final TransmissionResponseTorrents response = getResource("torrent-get", request, TransmissionResponseTorrents.class);
+
+        if (response.isSuccess()) {
+            return response.getArguments().getTorrents();
+        }
+
+        return Collections.emptyList();
+    }
+
+    public void addTorrent() {
+        final AddTorrentRequest request = new AddTorrentRequest();
+
+        final TransmissionResponseGeneric response = getResource("torent-add", request);
+    }
+
     @Override
-    public SessionStatistics getSessionStats() {
+    public SessionStatisticsDto getSessionStats() {
         final TransmissionResponseSessionStatistics response = getResource("session-stats", TransmissionResponseSessionStatistics.class);
 
         if (response.isSuccess()) {
@@ -66,25 +84,15 @@ public class TransmissionServiceImpl implements TransmissionService {
         return getResource(method, (Map<String, Object>) null);
     }
 
-    public TransmissionResponseGeneric getResource(final String method, final Map<String, Object> arguments) {
-        ResponseEntity<TransmissionResponseGeneric> response = restTemplate.postForEntity(
-                resourceHost,
-                new TransmissionRequest(method, arguments),
-                TransmissionResponseGeneric.class
-        );
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Method: {}, Response Status Code: {}", method, response.getStatusCode());
-        }
-
-        return response.getBody();
+    public TransmissionResponseGeneric getResource(final String method, final Object arguments) {
+        return getResource(method, arguments, TransmissionResponseGeneric.class);
     }
 
     private <T extends TransmissionResponse<?>> T getResource(final String method, Class<T> clazz) {
         return getResource(method, null, clazz);
     }
 
-    private <T extends TransmissionResponse<?>> T getResource(final String method, final Map<String, Object> arguments, Class<T> clazz) {
+    private <T extends TransmissionResponse<?>> T getResource(final String method, final Object arguments, Class<T> clazz) {
         ResponseEntity<T> response = restTemplate.postForEntity(
                 resourceHost,
                 new TransmissionRequest(method, arguments),

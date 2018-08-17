@@ -4,18 +4,18 @@ import org.apache.logging.log4j.core.config.plugins.validation.constraints.Requi
 
 import java.util.Map;
 
-public class TransmissionRequest {
+public class TransmissionRequest<T> {
 
     @Required
     private String method;
 
     // Optional
-    private Map<String, Object> arguments;
+    private T arguments;
 
     // Optional
     private Integer tag;
 
-    public TransmissionRequest(String method, Map<String, Object> arguments) {
+    public TransmissionRequest(final String method, final T arguments) {
         this.method = method;
         this.arguments = arguments;
     }
@@ -24,7 +24,7 @@ public class TransmissionRequest {
         return method;
     }
 
-    public Map<String, Object> getArguments() {
+    public T getArguments() {
         return arguments;
     }
 

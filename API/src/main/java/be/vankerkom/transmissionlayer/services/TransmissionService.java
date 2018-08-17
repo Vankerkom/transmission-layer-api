@@ -1,18 +1,21 @@
 package be.vankerkom.transmissionlayer.services;
 
 import be.vankerkom.transmissionlayer.models.dto.TransmissionResponseGeneric;
-import be.vankerkom.transmissionlayer.models.dto.partials.SessionStatistics;
+import be.vankerkom.transmissionlayer.models.dto.partials.SessionStatisticsDto;
+import be.vankerkom.transmissionlayer.models.dto.partials.TorrentDto;
 
-import java.util.Map;
+import java.util.List;
 
 public interface TransmissionService {
 
+    List<TorrentDto> getTorrents(List<String> fields);
+
     Object getSession();
 
-    SessionStatistics getSessionStats();
+    SessionStatisticsDto getSessionStats();
 
     TransmissionResponseGeneric getResource(String method);
 
-    TransmissionResponseGeneric getResource(String method, Map<String, Object> arguments);
+    TransmissionResponseGeneric getResource(String method, Object arguments);
 
 }

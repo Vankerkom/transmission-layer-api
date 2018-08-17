@@ -1,12 +1,12 @@
 package be.vankerkom.transmissionlayer.services;
 
-import be.vankerkom.transmissionlayer.models.dto.TransmissionResponseGeneric;
+import be.vankerkom.transmissionlayer.models.dto.partials.TorrentDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class TorrentServiceImpl implements TorrentService {
@@ -17,20 +17,11 @@ public class TorrentServiceImpl implements TorrentService {
     @Autowired
     private ModelMapper modelMapper;
 
-    public Object getTorrents() {
-        final Map<String, Object> arguments = new HashMap<>();
+    public List<TorrentDto> getTorrents() {
 
-        arguments.put("fields", new String[]{"id", "name", "status", "percentDone"});
+        final List<String> fields = Arrays.asList("id", "name", "status", "percentDone");
 
-        TransmissionResponseGeneric response = transmissionService.getResource("torrent-get", arguments);
-
-        if (response.isSuccess()) {
-            // TODO Map response.
-            return response.getArguments()
-                    .get("torrents");
-        }
-
-        return null;
+        return transmissionService.getTorrents(fields);
     }
 
 }
