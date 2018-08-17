@@ -1,6 +1,7 @@
 package be.vankerkom.transmissionlayer.services;
 
-import be.vankerkom.transmissionlayer.models.dto.TransmissionResponse;
+import be.vankerkom.transmissionlayer.models.dto.TransmissionResponseGeneric;
+import be.vankerkom.transmissionlayer.models.dto.partials.SessionStatistics;
 
 import java.util.Map;
 
@@ -8,8 +9,10 @@ public interface TransmissionService {
 
     Object getSession();
 
-    TransmissionResponse getResource(String method);
+    SessionStatistics getSessionStats();
 
-    TransmissionResponse getResource(String method, Map<String, Object> arguments);
+    TransmissionResponseGeneric getResource(String method);
+
+    TransmissionResponseGeneric getResource(String method, Map<String, Object> arguments);
 
 }

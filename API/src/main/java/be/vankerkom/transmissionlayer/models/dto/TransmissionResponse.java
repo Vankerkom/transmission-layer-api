@@ -1,44 +1,53 @@
 package be.vankerkom.transmissionlayer.models.dto;
 
-import java.io.Serializable;
-import java.util.Map;
+import org.apache.logging.log4j.core.config.plugins.validation.constraints.Required;
+import org.springframework.util.StringUtils;
 
-public class TransmissionResponse implements Serializable {
+import java.util.Optional;
 
+public class TransmissionResponse<T> {
+
+    private final static String SUCCESS_RESULT_VALUE = "success";
+
+    @Required
     private String result;
 
     // Optional
-    private Map<String, Object> arguments;
+    private Integer tag;
 
     // Optional
-    private int tag;
+    private T arguments;
 
     public String getResult() {
         return result;
     }
 
     public boolean isSuccess() {
-        return this.getResult().equalsIgnoreCase("success");
+        if (!StringUtils.isEmpty(result)) {
+            return result.equalsIgnoreCase(SUCCESS_RESULT_VALUE);
+        }
+
+        return false;
     }
 
     public void setResult(String result) {
         this.result = result;
     }
 
-    public Map<String, Object> getArguments() {
-        return arguments;
-    }
-
-    public void setArguments(Map<String, Object> arguments) {
-        this.arguments = arguments;
-    }
-
-    public int getTag() {
-        return tag;
+    public Optional<Integer> getTag() {
+        return Optional.of(tag);
     }
 
     public void setTag(int tag) {
         this.tag = tag;
+    }
+
+    public T getArguments() {
+        return arguments;
+    }
+
+    public void setArguments(T arguments) {
+        this.arguments = arguments;
     }
 
 }

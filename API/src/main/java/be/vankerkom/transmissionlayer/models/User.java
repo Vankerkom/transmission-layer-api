@@ -3,8 +3,8 @@ package be.vankerkom.transmissionlayer.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
-import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 @Entity
 public class User {
@@ -27,21 +27,20 @@ public class User {
     @Column(nullable = false)
     private boolean enabled = true;
 
-    private Timestamp createdAt;
+    private LocalDateTime createdAt;
 
-    private Timestamp updatedAt;
+    private LocalDateTime updatedAt;
 
-    private Timestamp deletedAt;
+    private LocalDateTime deletedAt;
 
     @PrePersist
     protected void prePersist() {
-        createdAt = Timestamp.from(Instant.now());
-        updatedAt = createdAt;
+        createdAt = updatedAt = LocalDateTime.now(ZoneOffset.UTC);
     }
 
     @PreUpdate
     protected void preUpdate() {
-        updatedAt = Timestamp.from(Instant.now());
+        updatedAt = LocalDateTime.now(ZoneOffset.UTC);
     }
 
     public int getId() {
@@ -84,27 +83,27 @@ public class User {
         this.enabled = enabled;
     }
 
-    public Timestamp getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Timestamp createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Timestamp getUpdatedAt() {
+    public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(Timestamp updatedAt) {
+    public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 
-    public Timestamp getDeletedAt() {
+    public LocalDateTime getDeletedAt() {
         return deletedAt;
     }
 
-    public void setDeletedAt(Timestamp deletedAt) {
+    public void setDeletedAt(LocalDateTime deletedAt) {
         this.deletedAt = deletedAt;
     }
 

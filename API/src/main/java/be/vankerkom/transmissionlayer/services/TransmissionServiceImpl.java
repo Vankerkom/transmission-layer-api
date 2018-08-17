@@ -2,6 +2,9 @@ package be.vankerkom.transmissionlayer.services;
 
 import be.vankerkom.transmissionlayer.models.dto.TransmissionRequest;
 import be.vankerkom.transmissionlayer.models.dto.TransmissionResponse;
+import be.vankerkom.transmissionlayer.models.dto.TransmissionResponseGeneric;
+import be.vankerkom.transmissionlayer.models.dto.TransmissionResponseSessionStatistics;
+import be.vankerkom.transmissionlayer.models.dto.partials.SessionStatistics;
 import be.vankerkom.transmissionlayer.transmission.TransmissionSessionIdInterceptor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,7 +42,7 @@ public class TransmissionServiceImpl implements TransmissionService {
     }
 
     public Object getSession() {
-        TransmissionResponse response = getResource("session-get");
+        TransmissionResponseGeneric response = getResource("session-get");
 
         if (response.isSuccess()) {
             return response.getArguments();
@@ -48,15 +51,44 @@ public class TransmissionServiceImpl implements TransmissionService {
         return null;
     }
 
-    public TransmissionResponse getResource(String method) {
-        return this.getResource(method, null);
+    @Override
+    public SessionStatistics getSessionStats() {
+        final TransmissionResponseSessionStatistics response = getResource("session-stats", TransmissionResponseSessionStatistics.class);
+
+        if (response.isSuccess()) {
+            return response.getArguments();
+        }
+
+        return null;
     }
 
-    public TransmissionResponse getResource(String method, Map<String, Object> arguments) {
-        ResponseEntity<TransmissionResponse> response = restTemplate.postForEntity(
+    public TransmissionResponseGeneric getResource(final String method) {
+        return getResource(method, (Map<String, Object>) null);
+    }
+
+    public TransmissionResponseGeneric getResource(final String method, final Map<String, Object> arguments) {
+        ResponseEntity<TransmissionResponseGeneric> response = restTemplate.postForEntity(
                 resourceHost,
                 new TransmissionRequest(method, arguments),
-                TransmissionResponse.class
+                TransmissionResponseGeneric.class
+        );
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Method: {}, Response Status Code: {}", method, response.getStatusCode());
+        }
+
+        return response.getBody();
+    }
+
+    private <T extends TransmissionResponse<?>> T getResource(final String method, Class<T> clazz) {
+        return getResource(method, null, clazz);
+    }
+
+    private <T extends TransmissionResponse<?>> T getResource(final String method, final Map<String, Object> arguments, Class<T> clazz) {
+        ResponseEntity<T> response = restTemplate.postForEntity(
+                resourceHost,
+                new TransmissionRequest(method, arguments),
+                clazz
         );
 
         if (LOG.isDebugEnabled()) {

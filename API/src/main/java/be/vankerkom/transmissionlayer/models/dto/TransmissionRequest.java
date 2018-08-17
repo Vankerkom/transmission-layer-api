@@ -1,10 +1,12 @@
 package be.vankerkom.transmissionlayer.models.dto;
 
-import java.io.Serializable;
+import org.apache.logging.log4j.core.config.plugins.validation.constraints.Required;
+
 import java.util.Map;
 
-public class TransmissionRequest implements Serializable {
+public class TransmissionRequest {
 
+    @Required
     private String method;
 
     // Optional

@@ -1,6 +1,6 @@
 package be.vankerkom.transmissionlayer.services;
 
-import be.vankerkom.transmissionlayer.models.dto.TransmissionResponse;
+import be.vankerkom.transmissionlayer.models.dto.TransmissionResponseGeneric;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ public class TorrentServiceImpl implements TorrentService {
 
         arguments.put("fields", new String[]{"id", "name", "status", "percentDone"});
 
-        TransmissionResponse response = transmissionService.getResource("torrent-get", arguments);
+        TransmissionResponseGeneric response = transmissionService.getResource("torrent-get", arguments);
 
         if (response.isSuccess()) {
             // TODO Map response.

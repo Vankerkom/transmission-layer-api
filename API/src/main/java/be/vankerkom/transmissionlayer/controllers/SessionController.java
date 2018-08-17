@@ -1,5 +1,6 @@
 package be.vankerkom.transmissionlayer.controllers;
 
+import be.vankerkom.transmissionlayer.models.dto.partials.SessionStatistics;
 import be.vankerkom.transmissionlayer.services.TransmissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,11 +15,18 @@ public class SessionController {
     @Autowired
     private TransmissionService transmissionService;
 
-    @GetMapping(produces = "application/json")
-    public ResponseEntity index() {
-        Object session = transmissionService.getSession();
+    @GetMapping
+    public ResponseEntity getSession() {
+        final Object session = transmissionService.getSession();
 
         return ResponseEntity.ok(session);
+    }
+
+    @GetMapping("/stats")
+    public ResponseEntity getSessionStats() {
+        final SessionStatistics sessionStats = transmissionService.getSessionStats();
+
+        return ResponseEntity.ok(sessionStats);
     }
 
 }
