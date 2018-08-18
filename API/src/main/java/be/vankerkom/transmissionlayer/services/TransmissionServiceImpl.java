@@ -16,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 public class TransmissionServiceImpl implements TransmissionService {
@@ -52,7 +53,11 @@ public class TransmissionServiceImpl implements TransmissionService {
     }
 
     public List<TorrentDto> getTorrents(final List<String> fields) {
-        final GetTorrentsRequest request = new GetTorrentsRequest(fields);
+       return getTorrents(fields, null);
+    }
+
+    public List<TorrentDto> getTorrents(final List<String> fields, final Set<Integer> ids) {
+        final GetTorrentsRequest request = new GetTorrentsRequest(fields, ids);
 
         final TransmissionResponseTorrents response = getResource("torrent-get", request, TransmissionResponseTorrents.class);
 
