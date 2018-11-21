@@ -5,6 +5,7 @@ import be.vankerkom.transmissionlayer.models.dto.partials.SessionStatisticsDto;
 import be.vankerkom.transmissionlayer.models.dto.partials.TorrentDto;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public interface TransmissionService {
@@ -13,9 +14,9 @@ public interface TransmissionService {
 
     List<TorrentDto> getTorrents(List<String> fields, Set<Integer> ids);
 
-    Object getSession();
+    Optional<Object> getSession();
 
-    SessionStatisticsDto getSessionStats();
+    Optional<SessionStatisticsDto> getSessionStats();
 
     TransmissionResponseGeneric getResource(String method);
 

@@ -13,10 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class TransmissionServiceImpl implements TransmissionService {
@@ -42,18 +39,18 @@ public class TransmissionServiceImpl implements TransmissionService {
 
     }
 
-    public Object getSession() {
-        TransmissionResponseGeneric response = getResource("session-get");
+    public Optional<Object> getSession() {
+        final TransmissionResponseGeneric response = getResource("session-get");
 
-        if (response.isSuccess()) {
-            return response.getArguments();
-        }
+        final Object arguments = isSuccessResponse(response)
+                ? response.getArguments()
+                : null;
 
-        return null;
+        return Optional.ofNullable(arguments);
     }
 
     public List<TorrentDto> getTorrents(final List<String> fields) {
-       return getTorrents(fields, null);
+        return getTorrents(fields, null);
     }
 
     public List<TorrentDto> getTorrents(final List<String> fields, final Set<Integer> ids) {
@@ -75,14 +72,14 @@ public class TransmissionServiceImpl implements TransmissionService {
     }
 
     @Override
-    public SessionStatisticsDto getSessionStats() {
+    public Optional<SessionStatisticsDto> getSessionStats() {
         final TransmissionResponseSessionStatistics response = getResource("session-stats", TransmissionResponseSessionStatistics.class);
 
-        if (response.isSuccess()) {
-            return response.getArguments();
-        }
+        final SessionStatisticsDto statisticsDto = isSuccessResponse(response)
+                ? response.getArguments()
+                : null;
 
-        return null;
+        return Optional.ofNullable(statisticsDto);
     }
 
     public TransmissionResponseGeneric getResource(final String method) {
@@ -93,22 +90,38 @@ public class TransmissionServiceImpl implements TransmissionService {
         return getResource(method, arguments, TransmissionResponseGeneric.class);
     }
 
-    private <T extends TransmissionResponse<?>> T getResource(final String method, Class<T> clazz) {
+    private <T extends TransmissionResponse<?>> T getResource(final String method, final Class<T> clazz) {
         return getResource(method, null, clazz);
     }
 
-    private <T extends TransmissionResponse<?>> T getResource(final String method, final Object arguments, Class<T> clazz) {
-        ResponseEntity<T> response = restTemplate.postForEntity(
-                resourceHost,
-                new TransmissionRequest(method, arguments),
-                clazz
-        );
+    private <T extends TransmissionResponse<?>> T getResource(final String method, final Object arguments, final Class<T> clazz) {
+        final Optional<ResponseEntity<T>> response = getRemoteResource(method, arguments, clazz);
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Method: {}, Response Status Code: {}", method, response.getStatusCode());
+            response.ifPresent(r -> LOG.debug("Method: {}, Response Status Code: {}", method, r.getStatusCode()));
         }
 
-        return response.getBody();
+        return response.map(r -> r.getBody())
+                .orElse(null);
+    }
+
+    private <T extends TransmissionResponse<?>> Optional<ResponseEntity<T>> getRemoteResource(final String method, final Object arguments, final Class<T> clazz) {
+        try {
+            final ResponseEntity<T> response = restTemplate.postForEntity(
+                    resourceHost,
+                    new TransmissionRequest(method, arguments),
+                    clazz
+            );
+
+            return Optional.of(response);
+        } catch (Exception e) {
+            LOG.error("Failed to fetch remote resource: {}", method, e);
+            return Optional.empty();
+        }
+    }
+
+    private static boolean isSuccessResponse(final TransmissionResponse<?> response) {
+        return response != null && response.isSuccess();
     }
 
 }
