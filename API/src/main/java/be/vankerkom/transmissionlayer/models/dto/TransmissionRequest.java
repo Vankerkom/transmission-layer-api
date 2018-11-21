@@ -2,8 +2,6 @@ package be.vankerkom.transmissionlayer.models.dto;
 
 import org.apache.logging.log4j.core.config.plugins.validation.constraints.Required;
 
-import java.util.Map;
-
 public class TransmissionRequest<T> {
 
     @Required

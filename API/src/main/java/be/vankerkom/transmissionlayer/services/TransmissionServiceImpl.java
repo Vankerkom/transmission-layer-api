@@ -1,6 +1,12 @@
 package be.vankerkom.transmissionlayer.services;
 
-import be.vankerkom.transmissionlayer.models.dto.*;
+import be.vankerkom.transmissionlayer.models.dto.AddTorrentRequest;
+import be.vankerkom.transmissionlayer.models.dto.GetTorrentsRequest;
+import be.vankerkom.transmissionlayer.models.dto.TransmissionRequest;
+import be.vankerkom.transmissionlayer.models.dto.TransmissionResponse;
+import be.vankerkom.transmissionlayer.models.dto.TransmissionResponseGeneric;
+import be.vankerkom.transmissionlayer.models.dto.TransmissionResponseSessionStatistics;
+import be.vankerkom.transmissionlayer.models.dto.TransmissionResponseTorrents;
 import be.vankerkom.transmissionlayer.models.dto.partials.SessionStatisticsDto;
 import be.vankerkom.transmissionlayer.models.dto.partials.TorrentDto;
 import be.vankerkom.transmissionlayer.transmission.TransmissionSessionIdInterceptor;
@@ -13,7 +19,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class TransmissionServiceImpl implements TransmissionService {
