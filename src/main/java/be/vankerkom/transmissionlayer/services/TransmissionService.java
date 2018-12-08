@@ -1,5 +1,6 @@
 package be.vankerkom.transmissionlayer.services;
 
+import be.vankerkom.transmissionlayer.exceptions.DuplicateException;
 import be.vankerkom.transmissionlayer.models.dto.NewTorrentRequest;
 import be.vankerkom.transmissionlayer.models.dto.TransmissionResponseGeneric;
 import be.vankerkom.transmissionlayer.models.dto.partials.SessionStatisticsDto;
@@ -24,6 +25,6 @@ public interface TransmissionService {
 
     TransmissionResponseGeneric getResource(String method, Object arguments);
 
-    Optional<TorrentDataDto> addTorrent(NewTorrentRequest request);
+    Optional<TorrentDataDto> addTorrent(NewTorrentRequest request) throws DuplicateException;
 
 }

@@ -1,12 +1,12 @@
 package be.vankerkom.transmissionlayer.services;
 
+import be.vankerkom.transmissionlayer.exceptions.DuplicateException;
 import be.vankerkom.transmissionlayer.models.dto.*;
 import be.vankerkom.transmissionlayer.models.dto.partials.AddTorrentDto;
 import be.vankerkom.transmissionlayer.models.dto.partials.SessionStatisticsDto;
 import be.vankerkom.transmissionlayer.models.dto.partials.TorrentDataDto;
 import be.vankerkom.transmissionlayer.models.dto.partials.TorrentDto;
 import be.vankerkom.transmissionlayer.transmission.TransmissionSessionIdInterceptor;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
@@ -16,7 +16,6 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
@@ -75,25 +74,22 @@ public class TransmissionServiceImpl implements TransmissionService {
         return Collections.emptyList();
     }
 
-    public Optional<TorrentDataDto> addTorrent(final NewTorrentRequest torrentRequestData) {
+    public Optional<TorrentDataDto> addTorrent(final NewTorrentRequest torrentRequestData) throws DuplicateException {
         final AddTorrentRequest request = mapper.map(torrentRequestData, AddTorrentRequest.class);
 
         request.setPaused(true); // Always pause the torrent.
 
         final TransmissionResponseAddTorrent response = getResource("torrent-add", request, TransmissionResponseAddTorrent.class);
-
-        if (response == null) {
-            return Optional.empty();
-        }
-
         final AddTorrentDto arguments = response.getArguments();
 
         if (!isSuccessResponse(response) || arguments == null) {
-            if (arguments != null && arguments.getDuplicate() != null) {
-                throw new RuntimeException("Duplicate torrent"); // TODO Replace w/ a custom exception.
-            }
-
             return Optional.empty();
+        }
+
+        final TorrentDataDto duplicate = arguments.getDuplicate();
+
+        if (duplicate != null) {
+            throw new DuplicateException(duplicate);
         }
 
         return Optional.ofNullable(arguments.getTorrentAdded());

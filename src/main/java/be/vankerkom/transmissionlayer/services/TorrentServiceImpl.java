@@ -1,5 +1,6 @@
 package be.vankerkom.transmissionlayer.services;
 
+import be.vankerkom.transmissionlayer.exceptions.DuplicateException;
 import be.vankerkom.transmissionlayer.models.Torrent;
 import be.vankerkom.transmissionlayer.models.User;
 import be.vankerkom.transmissionlayer.models.UserPrincipal;
@@ -44,7 +45,7 @@ public class TorrentServiceImpl implements TorrentService {
     }
 
     @Override
-    public Optional<TorrentDto> addTorrent(final UserPrincipal userPrincipal, final NewTorrentRequest request) {
+    public Optional<TorrentDto> addTorrent(final UserPrincipal userPrincipal, final NewTorrentRequest request) throws DuplicateException {
         final User user = userPrincipal.getUser();
 
         // Add the torrent to Transmission.

@@ -1,5 +1,6 @@
 package be.vankerkom.transmissionlayer.services;
 
+import be.vankerkom.transmissionlayer.exceptions.DuplicateException;
 import be.vankerkom.transmissionlayer.models.UserPrincipal;
 import be.vankerkom.transmissionlayer.models.dto.NewTorrentRequest;
 import be.vankerkom.transmissionlayer.models.dto.partials.TorrentDto;
@@ -11,6 +12,6 @@ public interface TorrentService {
 
     Optional<List<TorrentDto>> getTorrents(UserPrincipal userPrincipal);
 
-    Optional<TorrentDto> addTorrent(UserPrincipal userPrincipal, NewTorrentRequest request);
+    Optional<TorrentDto> addTorrent(UserPrincipal userPrincipal, NewTorrentRequest request) throws DuplicateException;
 
 }

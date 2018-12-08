@@ -1,5 +1,6 @@
 package be.vankerkom.transmissionlayer.controllers;
 
+import be.vankerkom.transmissionlayer.exceptions.DuplicateException;
 import be.vankerkom.transmissionlayer.exceptions.EntityNotFoundException;
 import be.vankerkom.transmissionlayer.models.UserPrincipal;
 import be.vankerkom.transmissionlayer.models.dto.NewTorrentRequest;
@@ -26,7 +27,7 @@ public class TorrentController {
     }
 
     @PostMapping
-    public TorrentDto post(@AuthenticationPrincipal UserPrincipal userPrincipal, @Valid @RequestBody NewTorrentRequest request) {
+    public TorrentDto post(@AuthenticationPrincipal UserPrincipal userPrincipal, @Valid @RequestBody NewTorrentRequest request) throws DuplicateException {
         return torrentService.addTorrent(userPrincipal, request)
                 .orElseThrow(() -> new RuntimeException("Failed to add the torrent."));
     }
