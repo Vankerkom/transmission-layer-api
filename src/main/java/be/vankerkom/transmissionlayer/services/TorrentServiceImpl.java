@@ -8,10 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,17 +23,17 @@ public class TorrentServiceImpl implements TorrentService {
     @Autowired
     private ModelMapper modelMapper;
 
-    public List<TorrentDto> getTorrents(UserPrincipal userPrincipal) {
+    public Optional<List<TorrentDto>> getTorrents(UserPrincipal userPrincipal) {
         final List<Torrent> torrents = torrentRepository.findByUser(userPrincipal.getUser());
 
         if (torrents.isEmpty()) {
-            return Collections.emptyList();
+            return Optional.of(Collections.emptyList());
         }
 
         final List<String> fields = Arrays.asList("id", "name", "status", "percentDone");
         final Set<Integer> ids = mapTorrentsToIdSet(torrents);
 
-        return transmissionService.getTorrents(fields, ids);
+        return Optional.ofNullable(transmissionService.getTorrents(fields, ids));
     }
 
     private static Set<Integer> mapTorrentsToIdSet(final List<Torrent> torrents) {
