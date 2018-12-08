@@ -1,6 +1,6 @@
 package be.vankerkom.transmissionlayer.controllers;
 
-import be.vankerkom.transmissionlayer.EntityNotFoundException;
+import be.vankerkom.transmissionlayer.exceptions.EntityNotFoundException;
 import be.vankerkom.transmissionlayer.models.dto.partials.SessionStatisticsDto;
 import be.vankerkom.transmissionlayer.services.TransmissionService;
 import org.springframework.beans.factory.annotation.Autowired;

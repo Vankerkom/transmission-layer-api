@@ -1,4 +1,4 @@
-package be.vankerkom.transmissionlayer;
+package be.vankerkom.transmissionlayer.exceptions;
 
 public class EntityNotFoundException extends RuntimeException {
 
