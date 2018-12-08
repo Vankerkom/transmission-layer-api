@@ -62,7 +62,9 @@ public class TorrentServiceImpl implements TorrentService {
         final Optional<Torrent> savedTorrent = attachTorrentToUser(torrentData, user);
 
         if (!savedTorrent.isPresent()) {
-            // TODO If saving the torrent fails, remove it.
+            // If saving the torrent data to the database fails, remove all contents of it from the transmission instance.
+            transmissionService.removeTorrent(torrentData.getId(), true);
+
             return Optional.empty();
         }
 
