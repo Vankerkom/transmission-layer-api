@@ -27,4 +27,8 @@ public interface TransmissionService {
 
     Optional<TorrentDataDto> addTorrent(NewTorrentRequest request) throws DuplicateException;
 
+    void removeTorrent(int id, boolean deleteLocalContent);
+
+    void removeTorrents(Set<Integer> ids, boolean deleteLocalContent);
+
 }

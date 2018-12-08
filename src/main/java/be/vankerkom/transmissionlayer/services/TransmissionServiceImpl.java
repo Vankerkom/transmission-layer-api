@@ -16,6 +16,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
@@ -93,6 +94,28 @@ public class TransmissionServiceImpl implements TransmissionService {
         }
 
         return Optional.ofNullable(arguments.getTorrentAdded());
+    }
+
+    @Override
+    public void removeTorrent(final int id, final boolean deleteLocalContent) {
+        removeTorrents(Collections.singleton(id), deleteLocalContent);
+    }
+
+    @Override
+    public void removeTorrents(final Set<Integer> ids, final  boolean deleteLocalContent) {
+        if (CollectionUtils.isEmpty(ids)) {
+            throw new IllegalArgumentException("Ids cannot be empty");
+        }
+
+        // Set-up the request data.
+        final RemoveTorrentRequest request = new RemoveTorrentRequest(ids, deleteLocalContent);
+
+        // Execute the API call.
+        final TransmissionResponseGeneric response = getResource("torrent-remove", request);
+
+        if (!isSuccessResponse(response)) {
+            LOG.error("Failed to delete torrents - deleteLocalContent: {}, ids: {}", deleteLocalContent, ids);
+        }
     }
 
     @Override
