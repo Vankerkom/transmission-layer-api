@@ -35,4 +35,8 @@ public interface TransmissionService {
 
     void startTorrents(Set<Integer> ids);
 
+    void stopTorrent(int id);
+
+    void stopTorrents(Set<Integer> ids);
+
 }

@@ -120,13 +120,23 @@ public class TransmissionServiceImpl implements TransmissionService {
     }
 
     @Override
-    public void startTorrent(int id) {
+    public void startTorrent(final int id) {
         startTorrents(Collections.singleton(id));
     }
 
     @Override
     public void startTorrents(final Set<Integer> ids) {
         sendActionRequest(TorrentActionRequest.START, ids);
+    }
+
+    @Override
+    public void stopTorrent(final int id) {
+        stopTorrents(Collections.singleton(id));
+    }
+
+    @Override
+    public void stopTorrents(final Set<Integer> ids) {
+        sendActionRequest(TorrentActionRequest.STOP, ids);
     }
 
     private void sendActionRequest(final TorrentActionRequest action, final Set<Integer> ids) {
