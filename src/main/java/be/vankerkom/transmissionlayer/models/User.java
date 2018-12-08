@@ -123,4 +123,12 @@ public class User {
     public Set<Torrent> getTorrents() {
         return torrents;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                '}';
+    }
 }

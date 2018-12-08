@@ -1,7 +1,7 @@
 package be.vankerkom.transmissionlayer.models.dto;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.core.config.plugins.validation.constraints.Required;
-import org.springframework.util.StringUtils;
 
 import java.util.Optional;
 
@@ -23,7 +23,7 @@ public class TransmissionResponse<T> {
     }
 
     public boolean isSuccess() {
-        if (!StringUtils.isEmpty(result)) {
+        if (StringUtils.isNotBlank(result)) {
             return result.equalsIgnoreCase(SUCCESS_RESULT_VALUE);
         }
 

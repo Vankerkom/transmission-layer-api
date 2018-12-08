@@ -1,22 +1,10 @@
 package be.vankerkom.transmissionlayer.models.dto.partials;
 
-public class TorrentDto {
+public class TorrentDto extends TorrentDataDto {
 
-    private Integer id;
+    private Integer status = 0;
 
-    private String name;
-
-    private Integer status;
-
-    private Float percentDone;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
+    private Float percentDone = 0.0f;
 
     public Integer getStatus() {
         return status;

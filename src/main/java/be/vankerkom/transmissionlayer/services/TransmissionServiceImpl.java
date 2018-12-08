@@ -1,29 +1,25 @@
 package be.vankerkom.transmissionlayer.services;
 
-import be.vankerkom.transmissionlayer.models.dto.AddTorrentRequest;
-import be.vankerkom.transmissionlayer.models.dto.GetTorrentsRequest;
-import be.vankerkom.transmissionlayer.models.dto.TransmissionRequest;
-import be.vankerkom.transmissionlayer.models.dto.TransmissionResponse;
-import be.vankerkom.transmissionlayer.models.dto.TransmissionResponseGeneric;
-import be.vankerkom.transmissionlayer.models.dto.TransmissionResponseSessionStatistics;
-import be.vankerkom.transmissionlayer.models.dto.TransmissionResponseTorrents;
+import be.vankerkom.transmissionlayer.models.dto.*;
+import be.vankerkom.transmissionlayer.models.dto.partials.AddTorrentDto;
 import be.vankerkom.transmissionlayer.models.dto.partials.SessionStatisticsDto;
+import be.vankerkom.transmissionlayer.models.dto.partials.TorrentDataDto;
 import be.vankerkom.transmissionlayer.models.dto.partials.TorrentDto;
 import be.vankerkom.transmissionlayer.transmission.TransmissionSessionIdInterceptor;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class TransmissionServiceImpl implements TransmissionService {
@@ -35,10 +31,13 @@ public class TransmissionServiceImpl implements TransmissionService {
 
     private RestTemplate restTemplate;
 
+    private final ModelMapper mapper;
+
     @Autowired
     public TransmissionServiceImpl(@Value("${transmission.username}") final String username,
                                    @Value("${transmission.password}") final String password,
-                                   final RestTemplateBuilder restTemplateBuilder) {
+                                   final RestTemplateBuilder restTemplateBuilder,
+                                   final ModelMapper mapper) {
 
         restTemplate = restTemplateBuilder
                 .setConnectTimeout(1000)
@@ -47,6 +46,7 @@ public class TransmissionServiceImpl implements TransmissionService {
                 .basicAuthorization(username, password)
                 .build();
 
+        this.mapper = mapper;
     }
 
     public Optional<Object> getSession() {
@@ -75,10 +75,28 @@ public class TransmissionServiceImpl implements TransmissionService {
         return Collections.emptyList();
     }
 
-    public void addTorrent() {
-        final AddTorrentRequest request = new AddTorrentRequest();
+    public Optional<TorrentDataDto> addTorrent(final NewTorrentRequest torrentRequestData) {
+        final AddTorrentRequest request = mapper.map(torrentRequestData, AddTorrentRequest.class);
 
-        final TransmissionResponseGeneric response = getResource("torent-add", request);
+        request.setPaused(true); // Always pause the torrent.
+
+        final TransmissionResponseAddTorrent response = getResource("torrent-add", request, TransmissionResponseAddTorrent.class);
+
+        if (response == null) {
+            return Optional.empty();
+        }
+
+        final AddTorrentDto arguments = response.getArguments();
+
+        if (!isSuccessResponse(response) || arguments == null) {
+            if (arguments != null && arguments.getDuplicate() != null) {
+                throw new RuntimeException("Duplicate torrent"); // TODO Replace w/ a custom exception.
+            }
+
+            return Optional.empty();
+        }
+
+        return Optional.ofNullable(arguments.getTorrentAdded());
     }
 
     @Override
@@ -111,7 +129,7 @@ public class TransmissionServiceImpl implements TransmissionService {
             response.ifPresent(r -> LOG.debug("Method: {}, Response Status Code: {}", method, r.getStatusCode()));
         }
 
-        return response.map(r -> r.getBody())
+        return response.map(HttpEntity::getBody)
                 .orElse(null);
     }
 
