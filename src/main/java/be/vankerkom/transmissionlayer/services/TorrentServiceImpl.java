@@ -70,7 +70,8 @@ public class TorrentServiceImpl implements TorrentService {
 
         final Torrent torrent = savedTorrent.get();
 
-        // TODO Start the torrent after it has been saved.
+        // Start torrent after it has been saved.
+        transmissionService.startTorrent(torrent.getId());
 
         LOG.debug("{} added a new torrent with id: {}", user.getUsername(), torrent.getId());
 

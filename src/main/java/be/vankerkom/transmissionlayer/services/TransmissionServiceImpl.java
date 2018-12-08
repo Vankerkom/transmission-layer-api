@@ -1,5 +1,6 @@
 package be.vankerkom.transmissionlayer.services;
 
+import be.vankerkom.transmissionlayer.transmission.TorrentActionRequest;
 import be.vankerkom.transmissionlayer.exceptions.DuplicateException;
 import be.vankerkom.transmissionlayer.models.dto.*;
 import be.vankerkom.transmissionlayer.models.dto.partials.AddTorrentDto;
@@ -78,7 +79,7 @@ public class TransmissionServiceImpl implements TransmissionService {
     public Optional<TorrentDataDto> addTorrent(final NewTorrentRequest torrentRequestData) throws DuplicateException {
         final AddTorrentRequest request = mapper.map(torrentRequestData, AddTorrentRequest.class);
 
-        request.setPaused(true); // Always pause the torrent.
+        request.setPaused(true); // Always pause the torrent, it will be started if it's successfully stored in the db.
 
         final TransmissionResponseAddTorrent response = getResource("torrent-add", request, TransmissionResponseAddTorrent.class);
         final AddTorrentDto arguments = response.getArguments();
@@ -115,6 +116,34 @@ public class TransmissionServiceImpl implements TransmissionService {
 
         if (!isSuccessResponse(response)) {
             LOG.error("Failed to delete torrents - deleteLocalContent: {}, ids: {}", deleteLocalContent, ids);
+        }
+    }
+
+    @Override
+    public void startTorrent(int id) {
+        startTorrents(Collections.singleton(id));
+    }
+
+    @Override
+    public void startTorrents(final Set<Integer> ids) {
+        sendActionRequest(TorrentActionRequest.START, ids);
+    }
+
+    private void sendActionRequest(final TorrentActionRequest action, final Set<Integer> ids) {
+        if (CollectionUtils.isEmpty(ids)) {
+            throw new IllegalArgumentException("Ids cannot be empty");
+        }
+
+        final String actionMethodName = action.getMethodName();
+
+        // Set-up the request data.
+        final IdsRequest request = new IdsRequest(ids);
+
+        // Execute the API call.
+        final TransmissionResponseGeneric response = getResource(actionMethodName, request);
+
+        if (!isSuccessResponse(response)) {
+            LOG.error("Failed to {} torrents - ids: {}", action, ids);
         }
     }
 

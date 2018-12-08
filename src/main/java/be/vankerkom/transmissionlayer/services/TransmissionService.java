@@ -31,4 +31,8 @@ public interface TransmissionService {
 
     void removeTorrents(Set<Integer> ids, boolean deleteLocalContent);
 
+    void startTorrent(int id);
+
+    void startTorrents(Set<Integer> ids);
+
 }
