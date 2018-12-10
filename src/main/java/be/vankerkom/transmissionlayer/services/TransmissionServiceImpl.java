@@ -69,7 +69,7 @@ public class TransmissionServiceImpl implements TransmissionService {
 
         final TransmissionResponseTorrents response = getResource("torrent-get", request, TransmissionResponseTorrents.class);
 
-        if (response.isSuccess()) {
+        if (isSuccessResponse(response)) {
             return response.getArguments().getTorrents();
         }
 
