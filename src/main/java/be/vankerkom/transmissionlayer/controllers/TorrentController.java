@@ -1,7 +1,6 @@
 package be.vankerkom.transmissionlayer.controllers;
 
 import be.vankerkom.transmissionlayer.exceptions.DuplicateException;
-import be.vankerkom.transmissionlayer.exceptions.EntityNotFoundException;
 import be.vankerkom.transmissionlayer.models.UserPrincipal;
 import be.vankerkom.transmissionlayer.models.dto.NewTorrentRequest;
 import be.vankerkom.transmissionlayer.models.dto.partials.TorrentDto;
@@ -23,7 +22,7 @@ public class TorrentController {
     @GetMapping
     public List<TorrentDto> index(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         return torrentService.getTorrents(userPrincipal)
-                .orElseThrow(() -> new EntityNotFoundException("Could not fetch torrent data."));
+                .orElseThrow(() -> new RuntimeException("Could not fetch torrent data."));
     }
 
     @PostMapping
