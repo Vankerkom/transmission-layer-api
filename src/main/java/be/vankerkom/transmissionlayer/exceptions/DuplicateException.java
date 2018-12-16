@@ -7,6 +7,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.CONFLICT)
 public class DuplicateException extends Exception {
 
+    public DuplicateException(final String message) {
+        super(message);
+    }
+
     public DuplicateException(TorrentDataDto torrentData) {
         super(String.format(
                 "Duplicate torrent (torrentId: %d, torrentName: %s, hash: %s)",

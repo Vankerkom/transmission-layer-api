@@ -1,4 +1,5 @@
 package be.vankerkom.transmissionlayer.models.dto;
 
-public class UserDetailsDto {
+public class UserDetailsDto extends UserDto {
+
 }
