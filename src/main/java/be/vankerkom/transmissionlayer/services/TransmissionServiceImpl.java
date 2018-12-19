@@ -188,7 +188,7 @@ public class TransmissionServiceImpl implements TransmissionService {
         }
 
         return response.map(HttpEntity::getBody)
-                .orElse(null);
+                .orElseThrow(() -> new RuntimeException("Could not communicate with the Transmission RPC"));
     }
 
     private <T extends TransmissionResponse<?>> Optional<ResponseEntity<T>> getRemoteResource(final String method, final Object arguments, final Class<T> clazz) {
