@@ -72,6 +72,7 @@ public class UserServiceImpl implements UserService {
             userRepository.delete(user);
             return true;
         } catch (Exception e) {
+            LOG.error("Could not delete userId: {}", user.getId(), e);
             return false;
         }
     }

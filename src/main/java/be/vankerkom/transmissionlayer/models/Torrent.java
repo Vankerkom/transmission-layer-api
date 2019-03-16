@@ -16,20 +16,20 @@ public class Torrent {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private User user;
 
-    protected Torrent() {
-    }
-
-    public Torrent(final Integer id, final User user) {
-        this.id = id;
-        this.setUser(user);
-    }
-
-    private void setUser(final User user) {
-        this.user = user;
-    }
-
     public Integer getId() {
         return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
 }

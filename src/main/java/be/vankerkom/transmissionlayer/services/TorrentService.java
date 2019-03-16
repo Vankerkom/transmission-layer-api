@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface TorrentService {
 
-    Optional<List<TorrentDto>> getTorrents(UserPrincipal userPrincipal);
+    List<TorrentDto> getTorrents(UserPrincipal userPrincipal);
 
     Optional<TorrentDto> addTorrent(UserPrincipal userPrincipal, NewTorrentRequest request) throws DuplicateException;
 

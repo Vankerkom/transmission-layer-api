@@ -21,8 +21,7 @@ public class TorrentController {
 
     @GetMapping
     public List<TorrentDto> index(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        return torrentService.getTorrents(userPrincipal)
-                .orElseThrow(() -> new RuntimeException("Could not fetch torrent data."));
+        return torrentService.getTorrents(userPrincipal);
     }
 
     @PostMapping

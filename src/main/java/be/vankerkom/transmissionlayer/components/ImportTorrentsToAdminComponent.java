@@ -1,5 +1,6 @@
 package be.vankerkom.transmissionlayer.components;
 
+import be.vankerkom.transmissionlayer.factory.TorrentFactory;
 import be.vankerkom.transmissionlayer.models.Torrent;
 import be.vankerkom.transmissionlayer.models.User;
 import be.vankerkom.transmissionlayer.models.dto.partials.TorrentDto;
@@ -79,7 +80,7 @@ public class ImportTorrentsToAdminComponent implements ApplicationRunner {
         final List<TorrentDto> torrents = transmissionService.getTorrents(Collections.singletonList("id"));
 
         return torrents.stream()
-                .map(t -> new Torrent(t.getId(), user))
+                .map(t -> TorrentFactory.create(t.getId(), user))
                 .collect(Collectors.toList());
     }
 

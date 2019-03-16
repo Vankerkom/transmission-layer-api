@@ -13,18 +13,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @SpringBootApplication
 public class Application {
 
-    @Bean
-    public ModelMapper modelMapper() {
-        final ModelMapper modelMapper = new ModelMapper();
-
-        return modelMapper;
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(12);
-    }
-
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }

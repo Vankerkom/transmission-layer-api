@@ -1,6 +1,7 @@
 package be.vankerkom.transmissionlayer.services;
 
 import be.vankerkom.transmissionlayer.exceptions.DuplicateException;
+import be.vankerkom.transmissionlayer.factory.TorrentFactory;
 import be.vankerkom.transmissionlayer.models.Torrent;
 import be.vankerkom.transmissionlayer.models.User;
 import be.vankerkom.transmissionlayer.models.UserPrincipal;
@@ -31,17 +32,17 @@ public class TorrentServiceImpl implements TorrentService {
     @Autowired
     private ModelMapper mapper;
 
-    public Optional<List<TorrentDto>> getTorrents(final UserPrincipal userPrincipal) {
+    public List<TorrentDto> getTorrents(final UserPrincipal userPrincipal) {
         final List<Torrent> torrents = torrentRepository.findByUser(userPrincipal.getUser());
 
         if (torrents.isEmpty()) {
-            return Optional.of(Collections.emptyList());
+            return Collections.emptyList();
         }
 
         final List<String> fields = Arrays.asList("id", "name", "status", "hashString", "percentDone");
         final Set<Integer> ids = mapTorrentsToIdSet(torrents);
 
-        return Optional.ofNullable(transmissionService.getTorrents(fields, ids));
+        return transmissionService.getTorrents(fields, ids);
     }
 
     @Override
@@ -83,16 +84,12 @@ public class TorrentServiceImpl implements TorrentService {
     private Optional<Torrent> attachTorrentToUser(final TorrentDataDto torrentData, final User user) {
         final int torrentId = torrentData.getId();
 
-        final Torrent newTorrent = new Torrent(torrentId, user);
+        final Torrent newTorrent = TorrentFactory.create(torrentId, user);
 
         try {
             return Optional.ofNullable(torrentRepository.save(newTorrent));
         } catch (Exception e) {
-            final String userValue = user != null
-                    ? user.toString()
-                    : "<NULL>";
-
-            LOG.error("Failed to attach torrentId: {} to user: {}", torrentId, userValue, e);
+            LOG.error("Failed to attach torrentId: {} to user: {}", torrentId, user, e);
         }
 
         return Optional.empty();
