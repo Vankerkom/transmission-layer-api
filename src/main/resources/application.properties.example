@@ -9,3 +9,8 @@ spring.jpa.hibernate.ddl-auto=update
 transmission.url=http://transmission:9091/transmission/rpc
 transmission.username=transmission
 transmission.password=transmission
+
+# Built-in administrator
+admin.username=admin
+admin.password=admin
+admin.enabled=true

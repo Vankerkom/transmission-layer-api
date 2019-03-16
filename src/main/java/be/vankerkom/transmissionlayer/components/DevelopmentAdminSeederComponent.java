@@ -1,5 +1,6 @@
 package be.vankerkom.transmissionlayer.components;
 
+import be.vankerkom.transmissionlayer.config.AdminConfigurationProperties;
 import be.vankerkom.transmissionlayer.models.User;
 import be.vankerkom.transmissionlayer.repositories.UserRepository;
 import org.apache.logging.log4j.LogManager;
@@ -18,6 +19,9 @@ public class DevelopmentAdminSeederComponent implements ApplicationRunner {
     private final Logger LOG = LogManager.getLogger(getClass());
 
     @Autowired
+    private AdminConfigurationProperties adminConfigurationProperties;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -25,6 +29,10 @@ public class DevelopmentAdminSeederComponent implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
+        if (!adminConfigurationProperties.isEnabled()) {
+            return;
+        }
+
         if (userRepository.count() != 0) {
             return;
         }
@@ -36,8 +44,8 @@ public class DevelopmentAdminSeederComponent implements ApplicationRunner {
         try {
             final User admin = new User();
 
-            admin.setUsername("admin");
-            admin.setPassword(passwordEncoder.encode("admin"));
+            admin.setUsername(adminConfigurationProperties.getUsername());
+            admin.setPassword(passwordEncoder.encode(adminConfigurationProperties.getPassword()));
             admin.setEmail("");
 
             userRepository.save(admin);

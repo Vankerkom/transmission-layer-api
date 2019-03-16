@@ -1,5 +1,6 @@
 package be.vankerkom.transmissionlayer.components;
 
+import be.vankerkom.transmissionlayer.config.AdminConfigurationProperties;
 import be.vankerkom.transmissionlayer.factory.TorrentFactory;
 import be.vankerkom.transmissionlayer.models.Torrent;
 import be.vankerkom.transmissionlayer.models.User;
@@ -29,6 +30,9 @@ public class ImportTorrentsToAdminComponent implements ApplicationRunner {
     private final Logger LOG = LogManager.getLogger(getClass());
 
     @Autowired
+    private AdminConfigurationProperties adminConfigurationProperties;
+
+    @Autowired
     private TransmissionService transmissionService;
 
     @Autowired
@@ -39,6 +43,10 @@ public class ImportTorrentsToAdminComponent implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
+        if (!adminConfigurationProperties.isEnabled()) {
+            return;
+        }
+
         if (torrentRepository.count() > 0) {
             return;
         }
