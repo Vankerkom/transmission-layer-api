@@ -87,7 +87,7 @@ public class TorrentServiceImpl implements TorrentService {
         final Torrent newTorrent = TorrentFactory.create(torrentId, user);
 
         try {
-            return Optional.ofNullable(torrentRepository.save(newTorrent));
+            return Optional.of(torrentRepository.save(newTorrent));
         } catch (Exception e) {
             LOG.error("Failed to attach torrentId: {} to user: {}", torrentId, user, e);
         }
