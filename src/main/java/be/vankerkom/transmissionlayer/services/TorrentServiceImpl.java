@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class TorrentServiceImpl implements TorrentService {
@@ -32,17 +33,44 @@ public class TorrentServiceImpl implements TorrentService {
     @Autowired
     private ModelMapper mapper;
 
-    public List<TorrentDto> getTorrents(final UserPrincipal userPrincipal) {
+    public List<TorrentDto> getTorrents(final UserPrincipal userPrincipal, final String filter) {
         final List<Torrent> torrents = torrentRepository.findByUser(userPrincipal.getUser());
 
         if (torrents.isEmpty()) {
             return Collections.emptyList();
         }
 
-        final List<String> fields = Arrays.asList("id", "name", "status", "hashString", "percentDone");
+        final List<String> fields = Arrays.asList("id", "name", "status", "hashString", "percentDone", "isFinished");
         final Set<Integer> ids = mapTorrentsToIdSet(torrents);
 
-        return transmissionService.getTorrents(fields, ids);
+        return filterData(transmissionService.getTorrents(fields, ids), filter);
+    }
+
+    private List<TorrentDto> filterData(final List<TorrentDto> torrents, final String filter) {
+        Stream<TorrentDto> torrentStream = torrents.stream();
+
+        switch (filter.toLowerCase()) {
+            case "downloading":
+                torrentStream = torrentStream.filter(torrent -> torrent.getStatus() == 1 || torrent.getStatus() == 4);
+                break;
+
+            case "seeding":
+                torrentStream = torrentStream.filter(torrent -> torrent.getStatus() == 6);
+                break;
+
+            case "inactive":
+                torrentStream = torrentStream.filter(torrent -> torrent.getStatus() == 0);
+                break;
+
+            case "completed":
+                torrentStream = torrentStream.filter(TorrentDto::isFinished);
+                break;
+
+            default:
+                break;
+        }
+
+        return torrentStream.collect(Collectors.toUnmodifiableList());
     }
 
     @Override

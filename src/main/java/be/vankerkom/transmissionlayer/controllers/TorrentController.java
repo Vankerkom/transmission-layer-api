@@ -20,8 +20,9 @@ public class TorrentController {
     private TorrentService torrentService;
 
     @GetMapping
-    public List<TorrentDto> index(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        return torrentService.getTorrents(userPrincipal);
+    public List<TorrentDto> index(@AuthenticationPrincipal final UserPrincipal userPrincipal,
+                                  @RequestParam(name = "filter", required = false, defaultValue = "all") final String filter) {
+        return torrentService.getTorrents(userPrincipal, filter);
     }
 
     @PostMapping
