@@ -1,13 +1,15 @@
 package be.vankerkom.transmissionlayer.services;
 
-import be.vankerkom.transmissionlayer.transmission.TorrentActionRequest;
 import be.vankerkom.transmissionlayer.exceptions.DuplicateException;
 import be.vankerkom.transmissionlayer.models.dto.*;
 import be.vankerkom.transmissionlayer.models.dto.partials.AddTorrentDto;
 import be.vankerkom.transmissionlayer.models.dto.partials.SessionStatisticsDto;
 import be.vankerkom.transmissionlayer.models.dto.partials.TorrentDataDto;
 import be.vankerkom.transmissionlayer.models.dto.partials.TorrentDto;
+import be.vankerkom.transmissionlayer.transmission.TorrentActionRequest;
 import be.vankerkom.transmissionlayer.transmission.TransmissionSessionIdInterceptor;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
@@ -23,14 +25,13 @@ import org.springframework.web.client.RestTemplate;
 import java.util.*;
 
 @Service
+@Log4j2
 public class TransmissionServiceImpl implements TransmissionService {
-
-    private static final Logger LOG = LogManager.getLogger(TransmissionServiceImpl.class);
 
     @Value("${transmission.url}")
     private String resourceHost;
 
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
     private final ModelMapper mapper;
 
@@ -41,8 +42,6 @@ public class TransmissionServiceImpl implements TransmissionService {
                                    final ModelMapper mapper) {
 
         restTemplate = restTemplateBuilder
-                .setConnectTimeout(1000)
-                .setReadTimeout(1000)
                 .interceptors(new TransmissionSessionIdInterceptor())
                 .basicAuthorization(username, password)
                 .build();
@@ -115,7 +114,7 @@ public class TransmissionServiceImpl implements TransmissionService {
         final TransmissionResponseGeneric response = getResource("torrent-remove", request);
 
         if (!isSuccessResponse(response)) {
-            LOG.error("Failed to delete torrents - deleteLocalContent: {}, ids: {}", deleteLocalContent, ids);
+            log.error("Failed to delete torrents - deleteLocalContent: {}, ids: {}", deleteLocalContent, ids);
         }
     }
 
@@ -153,7 +152,7 @@ public class TransmissionServiceImpl implements TransmissionService {
         final TransmissionResponseGeneric response = getResource(actionMethodName, request);
 
         if (!isSuccessResponse(response)) {
-            LOG.error("Failed to {} torrents - ids: {}", action, ids);
+            log.error("Failed to {} torrents - ids: {}", action, ids);
         }
     }
 
@@ -183,8 +182,8 @@ public class TransmissionServiceImpl implements TransmissionService {
     private <T extends TransmissionResponse<?>> T getResource(final String method, final Object arguments, final Class<T> clazz) {
         final Optional<ResponseEntity<T>> response = getRemoteResource(method, arguments, clazz);
 
-        if (LOG.isDebugEnabled()) {
-            response.ifPresent(r -> LOG.debug("Method: {}, Response Status Code: {}", method, r.getStatusCode()));
+        if (log.isDebugEnabled()) {
+            response.ifPresent(r -> log.debug("Method: {}, Response Status Code: {}", method, r.getStatusCode()));
         }
 
         return response.map(HttpEntity::getBody)
@@ -201,7 +200,7 @@ public class TransmissionServiceImpl implements TransmissionService {
 
             return Optional.of(response);
         } catch (Exception e) {
-            LOG.error("Failed to fetch remote resource: {}", method, e);
+            log.error("Failed to fetch remote resource: {}", method, e);
             return Optional.empty();
         }
     }

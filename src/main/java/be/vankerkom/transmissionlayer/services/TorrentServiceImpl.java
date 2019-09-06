@@ -9,10 +9,9 @@ import be.vankerkom.transmissionlayer.models.dto.NewTorrentRequest;
 import be.vankerkom.transmissionlayer.models.dto.partials.TorrentDataDto;
 import be.vankerkom.transmissionlayer.models.dto.partials.TorrentDto;
 import be.vankerkom.transmissionlayer.repositories.TorrentRepository;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -20,18 +19,15 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
+@RequiredArgsConstructor
+@Log4j2
 public class TorrentServiceImpl implements TorrentService {
 
-    private final Logger LOG = LogManager.getLogger(getClass());
+    private final TransmissionService transmissionService;
 
-    @Autowired
-    private TransmissionService transmissionService;
+    private final TorrentRepository torrentRepository;
 
-    @Autowired
-    private TorrentRepository torrentRepository;
-
-    @Autowired
-    private ModelMapper mapper;
+    private final ModelMapper mapper;
 
     public List<TorrentDto> getTorrents(final UserPrincipal userPrincipal, final String filter) {
         final List<Torrent> torrents = torrentRepository.findByUser(userPrincipal.getUser());
@@ -81,7 +77,7 @@ public class TorrentServiceImpl implements TorrentService {
         final Optional<TorrentDataDto> result = transmissionService.addTorrent(request);
 
         if (!result.isPresent()) {
-            LOG.error("Failed to add a new torrent by user: {}, fileName: {}", user.getUsername(), request.getFileName());
+            log.error("Failed to add a new torrent by user: {}, fileName: {}", user.getUsername(), request.getFileName());
             return Optional.empty();
         }
 
@@ -102,7 +98,7 @@ public class TorrentServiceImpl implements TorrentService {
         // Start torrent after it has been saved.
         transmissionService.startTorrent(torrent.getId());
 
-        LOG.debug("{} added a new torrent with id: {}", user.getUsername(), torrent.getId());
+        log.debug("{} added a new torrent with id: {}", user.getUsername(), torrent.getId());
 
         final TorrentDto torrentDto = mapper.map(torrentData, TorrentDto.class);
 
@@ -117,7 +113,7 @@ public class TorrentServiceImpl implements TorrentService {
         try {
             return Optional.of(torrentRepository.save(newTorrent));
         } catch (Exception e) {
-            LOG.error("Failed to attach torrentId: {} to user: {}", torrentId, user, e);
+            log.error("Failed to attach torrentId: {} to user: {}", torrentId, user, e);
         }
 
         return Optional.empty();

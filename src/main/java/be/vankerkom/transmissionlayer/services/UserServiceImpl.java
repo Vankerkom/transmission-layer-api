@@ -7,10 +7,9 @@ import be.vankerkom.transmissionlayer.models.UserPrincipal;
 import be.vankerkom.transmissionlayer.models.dto.NewUserDto;
 import be.vankerkom.transmissionlayer.models.dto.UserDetailsDto;
 import be.vankerkom.transmissionlayer.repositories.UserRepository;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,21 +21,18 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
+@RequiredArgsConstructor
+@Log4j2
 public class UserServiceImpl implements UserService {
 
-    private final Logger LOG = LogManager.getLogger(getClass());
+    private final UserRepository userRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final ModelMapper mapper;
 
-    @Autowired
-    private ModelMapper mapper;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
-    public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(final String username) {
         return userRepository.findByUsername(username)
                 .map(UserPrincipal::new)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
@@ -72,7 +68,7 @@ public class UserServiceImpl implements UserService {
             userRepository.delete(user);
             return true;
         } catch (Exception e) {
-            LOG.error("Could not delete userId: {}", user.getId(), e);
+            log.error("Could not delete userId: {}", user.getId(), e);
             return false;
         }
     }
@@ -100,7 +96,7 @@ public class UserServiceImpl implements UserService {
                 return Optional.ofNullable(mappedUser);
             }
         }catch (Exception e) {
-            LOG.error("Failed to create user", e);
+            log.error("Failed to create user", e);
         }
 
         return Optional.empty();

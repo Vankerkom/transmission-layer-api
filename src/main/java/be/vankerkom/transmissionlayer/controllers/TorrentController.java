@@ -5,7 +5,7 @@ import be.vankerkom.transmissionlayer.models.UserPrincipal;
 import be.vankerkom.transmissionlayer.models.dto.NewTorrentRequest;
 import be.vankerkom.transmissionlayer.models.dto.partials.TorrentDto;
 import be.vankerkom.transmissionlayer.services.TorrentService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,10 +14,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/torrents")
+@RequiredArgsConstructor
 public class TorrentController {
 
-    @Autowired
-    private TorrentService torrentService;
+    private final TorrentService torrentService;
 
     @GetMapping
     public List<TorrentDto> index(@AuthenticationPrincipal final UserPrincipal userPrincipal,
