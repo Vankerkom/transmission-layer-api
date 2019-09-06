@@ -1,5 +1,10 @@
 package be.vankerkom.transmissionlayer.models.dto.partials;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class TorrentDataDto {
 
     private Integer id;
@@ -7,29 +12,5 @@ public class TorrentDataDto {
     private String name;
 
     private String hashString;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getHashString() {
-        return hashString;
-    }
-
-    public void setHashString(String hashString) {
-        this.hashString = hashString;
-    }
 
 }

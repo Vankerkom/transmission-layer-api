@@ -1,7 +1,9 @@
 package be.vankerkom.transmissionlayer.models.dto.partials;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
 
+@Getter
 public class AddTorrentDto {
 
     @JsonProperty("torrent-added")
@@ -9,13 +11,5 @@ public class AddTorrentDto {
 
     @JsonProperty("torrent-duplicate")
     private TorrentDataDto duplicate;
-
-    public TorrentDataDto getTorrentAdded() {
-        return torrentAdded;
-    }
-
-    public TorrentDataDto getDuplicate() {
-        return duplicate;
-    }
 
 }

@@ -1,9 +1,11 @@
 package be.vankerkom.transmissionlayer.models.dto.partials;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
 
 import java.util.List;
 
+@Getter
 public class TorrentListDto {
 
     @JsonProperty("torrents")
@@ -11,13 +13,5 @@ public class TorrentListDto {
 
     @JsonProperty("removed")
     private List<Integer> removed;
-
-    public List<TorrentDto> getTorrents() {
-        return torrents;
-    }
-
-    public List<Integer> getRemoved() {
-        return removed;
-    }
 
 }

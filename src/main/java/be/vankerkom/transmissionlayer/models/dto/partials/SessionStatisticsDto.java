@@ -1,7 +1,9 @@
 package be.vankerkom.transmissionlayer.models.dto.partials;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
 
+@Getter
 public class SessionStatisticsDto {
 
     private Integer activeTorrentCount;
@@ -19,33 +21,5 @@ public class SessionStatisticsDto {
     private Long torrentCount;
 
     private Long uploadSpeed;
-
-    public Integer getActiveTorrentCount() {
-        return activeTorrentCount;
-    }
-
-    public SessionStatisticsDataDto getCumulative() {
-        return cumulative;
-    }
-
-    public SessionStatisticsDataDto getCurrent() {
-        return current;
-    }
-
-    public Long getDownloadSpeed() {
-        return downloadSpeed;
-    }
-
-    public Long getPausedTorrentCount() {
-        return pausedTorrentCount;
-    }
-
-    public Long getTorrentCount() {
-        return torrentCount;
-    }
-
-    public Long getUploadSpeed() {
-        return uploadSpeed;
-    }
 
 }
