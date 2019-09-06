@@ -8,9 +8,8 @@ import be.vankerkom.transmissionlayer.models.dto.partials.TorrentDto;
 import be.vankerkom.transmissionlayer.repositories.TorrentRepository;
 import be.vankerkom.transmissionlayer.repositories.UserRepository;
 import be.vankerkom.transmissionlayer.services.TransmissionService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.annotation.Order;
@@ -25,21 +24,17 @@ import java.util.stream.Collectors;
 @Transactional
 @Component
 @Order(2)
+@RequiredArgsConstructor
+@Log4j2
 public class ImportTorrentsToAdminComponent implements ApplicationRunner {
 
-    private final Logger LOG = LogManager.getLogger(getClass());
+    private final AdminConfigurationProperties adminConfigurationProperties;
 
-    @Autowired
-    private AdminConfigurationProperties adminConfigurationProperties;
+    private final TransmissionService transmissionService;
 
-    @Autowired
-    private TransmissionService transmissionService;
+    private final TorrentRepository torrentRepository;
 
-    @Autowired
-    private TorrentRepository torrentRepository;
-
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -61,15 +56,15 @@ public class ImportTorrentsToAdminComponent implements ApplicationRunner {
             return;
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Importing all torrents to the administrator account...");
+        if (log.isDebugEnabled()) {
+            log.debug("Importing all torrents to the administrator account...");
         }
 
         final List<Torrent> importedTorrents = getAndMapImportedTorrents(user);
 
         if (importedTorrents.isEmpty()) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("No torrents to import.");
+            if (log.isDebugEnabled()) {
+                log.debug("No torrents to import.");
             }
             return;
         }
@@ -78,8 +73,8 @@ public class ImportTorrentsToAdminComponent implements ApplicationRunner {
 
         userRepository.save(user);
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Imported {} torrents.", savedTorrentsCount);
+        if (log.isDebugEnabled()) {
+            log.debug("Imported {} torrents.", savedTorrentsCount);
         }
 
     }

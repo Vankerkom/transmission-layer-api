@@ -3,9 +3,8 @@ package be.vankerkom.transmissionlayer.components;
 import be.vankerkom.transmissionlayer.config.AdminConfigurationProperties;
 import be.vankerkom.transmissionlayer.models.User;
 import be.vankerkom.transmissionlayer.repositories.UserRepository;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.annotation.Order;
@@ -14,18 +13,15 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Order(1)
+@RequiredArgsConstructor
+@Log4j2
 public class DevelopmentAdminSeederComponent implements ApplicationRunner {
 
-    private final Logger LOG = LogManager.getLogger(getClass());
+    private final AdminConfigurationProperties adminConfigurationProperties;
 
-    @Autowired
-    private AdminConfigurationProperties adminConfigurationProperties;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -37,8 +33,8 @@ public class DevelopmentAdminSeederComponent implements ApplicationRunner {
             return;
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating admin account...");
+        if (log.isDebugEnabled()) {
+            log.debug("Creating admin account...");
         }
 
         try {
@@ -50,12 +46,12 @@ public class DevelopmentAdminSeederComponent implements ApplicationRunner {
 
             userRepository.save(admin);
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Admin account: {} created", admin.getUsername());
+            if (log.isDebugEnabled()) {
+                log.debug("Admin account: {} created", admin.getUsername());
             }
 
         } catch (Exception e) {
-            LOG.error("Failed to create admin account", e);
+            log.error("Failed to create admin account", e);
         }
 
     }
