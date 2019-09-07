@@ -7,6 +7,7 @@ import be.vankerkom.transmissionlayer.models.dto.UserDetailsDto;
 import be.vankerkom.transmissionlayer.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -23,18 +24,21 @@ public class UsersController {
 
     private final UserService userService;
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping
     public List<UserDetailsDto> index() {
         return userService.getAll()
                 .orElseThrow(() -> new EntityNotFoundException("Cannot fetch users"));
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/{id}")
     public UserDetailsDto get(@PathVariable final int id) {
         return userService.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
     public ResponseEntity post(@Valid @RequestBody NewUserDto newUser) throws DuplicateException {
         final UserDetailsDto userDetails = userService.create(newUser)
@@ -46,6 +50,7 @@ public class UsersController {
                 .body(userDetails);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity delete(@PathVariable final int id) {
         if (!userService.deleteById(id)) {
