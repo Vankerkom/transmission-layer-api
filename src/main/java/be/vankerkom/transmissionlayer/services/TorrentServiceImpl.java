@@ -1,6 +1,7 @@
 package be.vankerkom.transmissionlayer.services;
 
 import be.vankerkom.transmissionlayer.exceptions.DuplicateException;
+import be.vankerkom.transmissionlayer.exceptions.EntityNotFoundException;
 import be.vankerkom.transmissionlayer.factory.TorrentFactory;
 import be.vankerkom.transmissionlayer.models.Torrent;
 import be.vankerkom.transmissionlayer.models.User;
@@ -96,13 +97,23 @@ public class TorrentServiceImpl implements TorrentService {
         final Torrent torrent = savedTorrent.get();
 
         // Start torrent after it has been saved.
-        // FIXME transmissionService.startTorrent(torrent.getId());
+        transmissionService.startTorrent(torrent.getId());
 
         log.debug("{} added a new torrent with id: {}", user.getUsername(), torrent.getId());
 
         final TorrentDto torrentDto = mapper.map(torrentData, TorrentDto.class);
 
         return Optional.ofNullable(torrentDto);
+    }
+
+    @Override
+    public void deleteByUserAndId(final User user, final int id) {
+        final Torrent torrent = torrentRepository.findByUserAndId(user, id)
+                .orElseThrow(() -> new EntityNotFoundException("Torrent with id: " + id + " not found"));
+
+        torrentRepository.delete(torrent);
+
+        transmissionService.removeTorrent(torrent.getId(), false);
     }
 
     private Optional<Torrent> attachTorrentToUser(final TorrentDataDto torrentData, final User user) {
@@ -114,9 +125,8 @@ public class TorrentServiceImpl implements TorrentService {
             return Optional.of(torrentRepository.save(newTorrent));
         } catch (Exception e) {
             log.error("Failed to attach torrentId: {} to user: {}", torrentId, user, e);
+            return Optional.empty();
         }
-
-        return Optional.empty();
     }
 
     private static Set<Integer> mapTorrentsToIdSet(final List<Torrent> torrents) {

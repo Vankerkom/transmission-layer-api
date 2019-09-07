@@ -31,4 +31,9 @@ public class TorrentController {
                 .orElseThrow(() -> new RuntimeException("Failed to add the torrent."));
     }
 
+    @DeleteMapping("/{torrentId}")
+    public void delete(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable int torrentId) {
+        torrentService.deleteByUserAndId(userPrincipal.getUser(), torrentId);
+    }
+
 }
