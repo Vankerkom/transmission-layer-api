@@ -5,21 +5,16 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-import javax.validation.constraints.NotNull;
-
 @Configuration
 @ConfigurationProperties("admin")
 @Getter
 @Setter
 public class AdminConfigurationProperties {
 
-    @NotNull
-    private String username;
+    private String username = "";
 
-    @NotNull
-    private String password;
+    private String password = "";
 
-    @NotNull
-    private boolean enabled;
+    private boolean enabled = false;
 
 }
