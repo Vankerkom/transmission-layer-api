@@ -89,12 +89,9 @@ public class UserServiceImpl implements UserService {
             inputUser.setPassword(passwordEncoder.encode(inputUser.getPassword()));
 
             final User savedUser = userRepository.save(inputUser);
+            final UserDetailsDto mappedUser = mapper.map(savedUser, UserDetailsDto.class);
 
-            if (savedUser != null) {
-                final UserDetailsDto mappedUser = mapper.map(savedUser, UserDetailsDto.class);
-
-                return Optional.ofNullable(mappedUser);
-            }
+            return Optional.ofNullable(mappedUser);
         }catch (Exception e) {
             log.error("Failed to create user", e);
         }

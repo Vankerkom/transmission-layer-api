@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public class TransmissionResponse<T> {
 
-    private final static String SUCCESS_RESULT_VALUE = "success";
+    private static final String SUCCESS_RESULT_VALUE = "success";
 
     @Required
     private String result;

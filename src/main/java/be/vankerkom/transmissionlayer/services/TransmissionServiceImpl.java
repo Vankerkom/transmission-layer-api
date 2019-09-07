@@ -8,10 +8,7 @@ import be.vankerkom.transmissionlayer.models.dto.partials.TorrentDataDto;
 import be.vankerkom.transmissionlayer.models.dto.partials.TorrentDto;
 import be.vankerkom.transmissionlayer.transmission.TorrentActionRequest;
 import be.vankerkom.transmissionlayer.transmission.TransmissionSessionIdInterceptor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,7 +40,7 @@ public class TransmissionServiceImpl implements TransmissionService {
 
         restTemplate = restTemplateBuilder
                 .interceptors(new TransmissionSessionIdInterceptor())
-                .basicAuthorization(username, password)
+                .basicAuthentication(username, password)
                 .build();
 
         this.mapper = mapper;
