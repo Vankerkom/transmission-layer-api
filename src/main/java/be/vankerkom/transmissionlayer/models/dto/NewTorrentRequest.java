@@ -1,15 +1,14 @@
 package be.vankerkom.transmissionlayer.models.dto;
 
 import lombok.Getter;
-
-import javax.validation.constraints.NotBlank;
+import lombok.ToString;
 
 @Getter
+@ToString
 public class NewTorrentRequest {
 
-    @NotBlank
-    private String fileName;
+    public boolean url;
 
-    private String metaInfo;
+    private String data;
 
 }

@@ -77,7 +77,7 @@ public class TorrentServiceImpl implements TorrentService {
         final Optional<TorrentDataDto> result = transmissionService.addTorrent(request);
 
         if (!result.isPresent()) {
-            log.error("Failed to add a new torrent by user: {}, fileName: {}", user.getUsername(), request.getFileName());
+            log.error("Failed to add a new torrent by user: {}, request: {}", user.getUsername(), request);
             return Optional.empty();
         }
 
@@ -96,7 +96,7 @@ public class TorrentServiceImpl implements TorrentService {
         final Torrent torrent = savedTorrent.get();
 
         // Start torrent after it has been saved.
-        transmissionService.startTorrent(torrent.getId());
+        // FIXME transmissionService.startTorrent(torrent.getId());
 
         log.debug("{} added a new torrent with id: {}", user.getUsername(), torrent.getId());
 

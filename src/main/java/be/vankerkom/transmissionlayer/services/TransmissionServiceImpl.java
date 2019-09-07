@@ -73,7 +73,15 @@ public class TransmissionServiceImpl implements TransmissionService {
     }
 
     public Optional<TorrentDataDto> addTorrent(final NewTorrentRequest torrentRequestData) throws DuplicateException {
-        final AddTorrentRequest request = mapper.map(torrentRequestData, AddTorrentRequest.class);
+        final AddTorrentRequest request = new AddTorrentRequest();
+
+        if (torrentRequestData.isUrl()) {
+            // TODO Validate if the data is a valid torrent magnet link, else let transmission handle it.
+            request.setFileName(torrentRequestData.getData());
+        }else {
+            // TODO Validate if the data is base64.
+            request.setMetaInfo(torrentRequestData.getData());
+        }
 
         request.setPaused(true); // Always pause the torrent, it will be started if it's successfully stored in the db.
 
