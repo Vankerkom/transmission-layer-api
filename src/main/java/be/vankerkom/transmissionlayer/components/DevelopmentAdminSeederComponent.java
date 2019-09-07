@@ -42,6 +42,7 @@ public class DevelopmentAdminSeederComponent implements ApplicationRunner {
 
             admin.setUsername(adminConfigurationProperties.getUsername());
             admin.setPassword(passwordEncoder.encode(adminConfigurationProperties.getPassword()));
+            admin.setAdmin(true);
             admin.setEmail("");
 
             userRepository.save(admin);

@@ -33,6 +33,9 @@ public class User {
     private String password;
 
     @Column(nullable = false)
+    private boolean admin;
+
+    @Column(nullable = false)
     private boolean enabled = true;
 
     private LocalDateTime createdAt;
