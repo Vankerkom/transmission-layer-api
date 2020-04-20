@@ -7,6 +7,7 @@ import be.vankerkom.transmissionlayer.models.dto.NewUserDto;
 import be.vankerkom.transmissionlayer.models.dto.UserDetailsDto;
 import be.vankerkom.transmissionlayer.services.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -14,9 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
-
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/users")
@@ -45,7 +43,7 @@ public class UsersController {
         final UserDetailsDto userDetails = userService.create(newUser)
                 .orElseThrow(RuntimeException::new);
 
-        final URI createdLocation = linkTo(methodOn(UsersController.class).get(userDetails.getId())).toUri();
+        final URI createdLocation = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UsersController.class).get(userDetails.getId())).toUri();
 
         return ResponseEntity.created(createdLocation)
                 .body(userDetails);
