@@ -2,6 +2,7 @@ package be.vankerkom.transmissionlayer.controllers;
 
 import be.vankerkom.transmissionlayer.exceptions.DuplicateException;
 import be.vankerkom.transmissionlayer.exceptions.EntityNotFoundException;
+import be.vankerkom.transmissionlayer.models.dto.EditUserDto;
 import be.vankerkom.transmissionlayer.models.dto.NewUserDto;
 import be.vankerkom.transmissionlayer.models.dto.UserDetailsDto;
 import be.vankerkom.transmissionlayer.services.UserService;
@@ -48,6 +49,12 @@ public class UsersController {
 
         return ResponseEntity.created(createdLocation)
                 .body(userDetails);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("/{id}")
+    public UserDetailsDto edit(@PathVariable final int id, @Valid @RequestBody EditUserDto editUserRequest) {
+        return userService.editUser(id, editUserRequest);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

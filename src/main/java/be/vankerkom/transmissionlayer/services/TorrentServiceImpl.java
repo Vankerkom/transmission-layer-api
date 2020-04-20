@@ -74,6 +74,8 @@ public class TorrentServiceImpl implements TorrentService {
     public Optional<TorrentDto> addTorrent(final UserPrincipal userPrincipal, final NewTorrentRequest request) throws DuplicateException {
         final User user = userPrincipal.getUser();
 
+        request.setDownloadDirectory(user.getDownloadDirectory());
+
         // Add the torrent to Transmission.
         final Optional<TorrentDataDto> result = transmissionService.addTorrent(request);
 

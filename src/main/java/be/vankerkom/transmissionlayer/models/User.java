@@ -40,6 +40,8 @@ public class User {
     @Column(nullable = false)
     private boolean enabled = true;
 
+    private String downloadDirectory;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
@@ -66,4 +68,5 @@ public class User {
                 ", username='" + username + '\'' +
                 '}';
     }
+
 }

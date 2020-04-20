@@ -4,6 +4,7 @@ import be.vankerkom.transmissionlayer.exceptions.DuplicateException;
 import be.vankerkom.transmissionlayer.exceptions.EntityNotFoundException;
 import be.vankerkom.transmissionlayer.models.User;
 import be.vankerkom.transmissionlayer.models.UserPrincipal;
+import be.vankerkom.transmissionlayer.models.dto.EditUserDto;
 import be.vankerkom.transmissionlayer.models.dto.NewUserDto;
 import be.vankerkom.transmissionlayer.models.dto.UserDetailsDto;
 import be.vankerkom.transmissionlayer.repositories.UserRepository;
@@ -44,11 +45,11 @@ public class UserServiceImpl implements UserService {
             final Iterable<User> users = userRepository.findAll();
 
             final List<UserDetailsDto> userDetailsList = StreamSupport.stream(users.spliterator(), true)
-                    .map( u -> mapper.map(u, UserDetailsDto.class))
+                    .map(u -> mapper.map(u, UserDetailsDto.class))
                     .collect(Collectors.toList());
 
             return Optional.of(userDetailsList);
-        }catch (Exception e) {
+        } catch (Exception e) {
             return Optional.empty();
         }
     }
@@ -78,7 +79,7 @@ public class UserServiceImpl implements UserService {
         final String username = newUserDto.getUsername();
         final Optional<User> existingUser = userRepository.findByUsername(username);
 
-        if(existingUser.isPresent()) {
+        if (existingUser.isPresent()) {
             throw new DuplicateException("A user with username: \'" + username + "\' already exists");
         }
 
@@ -92,11 +93,22 @@ public class UserServiceImpl implements UserService {
             final UserDetailsDto mappedUser = mapper.map(savedUser, UserDetailsDto.class);
 
             return Optional.ofNullable(mappedUser);
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error("Failed to create user", e);
         }
 
         return Optional.empty();
+    }
+
+    @Override
+    public UserDetailsDto editUser(final int id, final EditUserDto editUserRequest) {
+        final User user = userRepository.findById(id)
+                .orElseThrow(EntityNotFoundException::new);
+
+        editUserRequest.getDownloadDirectory()
+                .ifPresent(user::setDownloadDirectory);
+
+        return mapper.map(userRepository.save(user), UserDetailsDto.class);
     }
 
 }

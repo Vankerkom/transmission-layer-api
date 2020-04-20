@@ -1,6 +1,7 @@
 package be.vankerkom.transmissionlayer.services;
 
 import be.vankerkom.transmissionlayer.exceptions.DuplicateException;
+import be.vankerkom.transmissionlayer.models.dto.EditUserDto;
 import be.vankerkom.transmissionlayer.models.dto.NewUserDto;
 import be.vankerkom.transmissionlayer.models.dto.UserDetailsDto;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,5 +18,7 @@ public interface UserService extends UserDetailsService {
     boolean deleteById(int id);
 
     Optional<UserDetailsDto> create(NewUserDto newUserDto) throws DuplicateException;
+
+    UserDetailsDto editUser(int id, EditUserDto editUserRequest);
 
 }

@@ -9,6 +9,7 @@ import be.vankerkom.transmissionlayer.models.dto.partials.TorrentDto;
 import be.vankerkom.transmissionlayer.transmission.TorrentActionRequest;
 import be.vankerkom.transmissionlayer.transmission.TransmissionSessionIdInterceptor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -81,6 +82,12 @@ public class TransmissionServiceImpl implements TransmissionService {
         }else {
             // TODO Validate if the data is base64.
             request.setMetaInfo(torrentRequestData.getData());
+        }
+
+        final String downloadDirectory = torrentRequestData.getDownloadDirectory();
+
+        if (StringUtils.isNotBlank(downloadDirectory)) {
+            request.setDownloadDirectory(downloadDirectory);
         }
 
         request.setPaused(true); // Always pause the torrent, it will be started if it's successfully stored in the db.

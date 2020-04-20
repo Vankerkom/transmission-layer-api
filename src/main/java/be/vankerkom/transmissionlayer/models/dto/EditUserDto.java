@@ -3,10 +3,12 @@ package be.vankerkom.transmissionlayer.models.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Optional;
+
 @Getter
 @Setter
-public class UserDetailsDto extends UserDto {
+public class EditUserDto {
 
-    private String downloadDirectory;
+    private Optional<String> downloadDirectory;
 
 }
