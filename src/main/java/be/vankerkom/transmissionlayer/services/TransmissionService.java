@@ -10,7 +10,6 @@ import be.vankerkom.transmissionlayer.transmission.TorrentActionRequest;
 import be.vankerkom.transmissionlayer.transmission.TransmissionSessionIdInterceptor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -31,20 +30,16 @@ public class TransmissionService {
 
     private final RestTemplate restTemplate;
 
-    private final ModelMapper mapper;
-
     @Autowired
     public TransmissionService(@Value("${transmission.username}") final String username,
                                @Value("${transmission.password}") final String password,
-                               final RestTemplateBuilder restTemplateBuilder,
-                               final ModelMapper mapper) {
+                               final RestTemplateBuilder restTemplateBuilder
+    ) {
 
         restTemplate = restTemplateBuilder
                 .interceptors(new TransmissionSessionIdInterceptor())
                 .basicAuthentication(username, password)
                 .build();
-
-        this.mapper = mapper;
     }
 
     public Optional<Object> getSession() {
@@ -112,7 +107,7 @@ public class TransmissionService {
         removeTorrents(Collections.singleton(id), deleteLocalContent);
     }
 
-    public void removeTorrents(final Set<Integer> ids, final  boolean deleteLocalContent) {
+    public void removeTorrents(final Set<Integer> ids, final boolean deleteLocalContent) {
         if (CollectionUtils.isEmpty(ids)) {
             throw new IllegalArgumentException("Ids cannot be empty");
         }
