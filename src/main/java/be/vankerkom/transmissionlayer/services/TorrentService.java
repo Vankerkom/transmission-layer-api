@@ -15,19 +15,28 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.util.Arrays.asList;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class TorrentService {
 
+    private static final List<String> GET_TORRENTS_FIELDS = asList(
+            "id", "name", "status", "hashString", "percentDone",
+            "isFinished", "totalSize", "downloadedEver", "uploadedEver",
+            "rateDownload", "rateUpload"
+    );
+
     private final TransmissionService transmissionService;
-
     private final TorrentRepository torrentRepository;
-
     private final ModelMapper mapper;
 
     public List<TransmissionTorrentDto> getTorrents(final UserPrincipal userPrincipal, final String filter) {
@@ -37,10 +46,9 @@ public class TorrentService {
             return Collections.emptyList();
         }
 
-        final List<String> fields = Arrays.asList("id", "name", "status", "hashString", "percentDone", "isFinished");
         final Set<Integer> ids = mapTorrentsToIdSet(torrents);
 
-        return filterData(transmissionService.getTorrents(fields, ids), filter);
+        return filterData(transmissionService.getTorrents(GET_TORRENTS_FIELDS, ids), filter);
     }
 
     private List<TransmissionTorrentDto> filterData(final List<TransmissionTorrentDto> torrents, final String filter) {

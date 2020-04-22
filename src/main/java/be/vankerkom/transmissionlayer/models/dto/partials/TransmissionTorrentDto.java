@@ -13,4 +13,14 @@ public class TransmissionTorrentDto extends TransmissionTorrentDataDto {
     @JsonProperty("isFinished")
     private boolean finished;
 
+    private Long totalSize;
+
+    private Long downloadedEver;
+
+    private Long uploadedEver;
+
+    private Long rateDownload;
+
+    private Long rateUpload;
+
 }

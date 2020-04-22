@@ -17,8 +17,11 @@ public class TorrentDto {
     public final String status;
     public final int progress;
     public final boolean finished;
-    public final int rx;
-    public final int tx;
+    public final long size;
+    public final long rx;
+    public final long tx;
+    public final long rxRate;
+    public final long txRate;
 
     public static TorrentDto of(TransmissionTorrentDto torrent) {
         return TorrentDto.builder()
@@ -28,6 +31,11 @@ public class TorrentDto {
                 .status("WIP")
                 .progress(min(round(torrent.getPercentDone() * 100), 100))
                 .finished(torrent.isFinished())
+                .rx(torrent.getDownloadedEver())
+                .tx(torrent.getUploadedEver())
+                .rxRate(torrent.getRateDownload())
+                .txRate(torrent.getRateUpload())
+                .size(torrent.getTotalSize())
                 .build();
     }
 
