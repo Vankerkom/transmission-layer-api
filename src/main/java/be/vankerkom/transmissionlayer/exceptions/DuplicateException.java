@@ -1,6 +1,6 @@
 package be.vankerkom.transmissionlayer.exceptions;
 
-import be.vankerkom.transmissionlayer.models.dto.partials.TorrentDataDto;
+import be.vankerkom.transmissionlayer.models.dto.partials.TransmissionTorrentDataDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -11,7 +11,7 @@ public class DuplicateException extends Exception {
         super(message);
     }
 
-    public DuplicateException(TorrentDataDto torrentData) {
+    public DuplicateException(TransmissionTorrentDataDto torrentData) {
         super(String.format(
                 "Duplicate torrent (torrentId: %d, torrentName: %s, hash: %s)",
                 torrentData.getId(),

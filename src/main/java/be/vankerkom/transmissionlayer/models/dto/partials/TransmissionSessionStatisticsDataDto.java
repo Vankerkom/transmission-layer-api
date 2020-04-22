@@ -3,7 +3,7 @@ package be.vankerkom.transmissionlayer.models.dto.partials;
 import lombok.Getter;
 
 @Getter
-public class SessionStatisticsDataDto {
+public class TransmissionSessionStatisticsDataDto {
 
     private Long downloadedBytes;
 

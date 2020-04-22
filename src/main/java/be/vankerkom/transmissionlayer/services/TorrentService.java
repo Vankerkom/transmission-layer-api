@@ -7,8 +7,8 @@ import be.vankerkom.transmissionlayer.models.Torrent;
 import be.vankerkom.transmissionlayer.models.User;
 import be.vankerkom.transmissionlayer.models.UserPrincipal;
 import be.vankerkom.transmissionlayer.models.dto.NewTorrentRequest;
-import be.vankerkom.transmissionlayer.models.dto.partials.TorrentDataDto;
-import be.vankerkom.transmissionlayer.models.dto.partials.TorrentDto;
+import be.vankerkom.transmissionlayer.models.dto.partials.TransmissionTorrentDataDto;
+import be.vankerkom.transmissionlayer.models.dto.partials.TransmissionTorrentDto;
 import be.vankerkom.transmissionlayer.repositories.TorrentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +30,7 @@ public class TorrentService {
 
     private final ModelMapper mapper;
 
-    public List<TorrentDto> getTorrents(final UserPrincipal userPrincipal, final String filter) {
+    public List<TransmissionTorrentDto> getTorrents(final UserPrincipal userPrincipal, final String filter) {
         final List<Torrent> torrents = torrentRepository.findByUser(userPrincipal.getUser());
 
         if (torrents.isEmpty()) {
@@ -43,8 +43,8 @@ public class TorrentService {
         return filterData(transmissionService.getTorrents(fields, ids), filter);
     }
 
-    private List<TorrentDto> filterData(final List<TorrentDto> torrents, final String filter) {
-        Stream<TorrentDto> torrentStream = torrents.stream();
+    private List<TransmissionTorrentDto> filterData(final List<TransmissionTorrentDto> torrents, final String filter) {
+        Stream<TransmissionTorrentDto> torrentStream = torrents.stream();
 
         switch (filter.toLowerCase()) {
             case "downloading":
@@ -60,7 +60,7 @@ public class TorrentService {
                 break;
 
             case "completed":
-                torrentStream = torrentStream.filter(TorrentDto::isFinished);
+                torrentStream = torrentStream.filter(TransmissionTorrentDto::isFinished);
                 break;
 
             default:
@@ -70,20 +70,20 @@ public class TorrentService {
         return torrentStream.collect(Collectors.toUnmodifiableList());
     }
 
-    public Optional<TorrentDto> addTorrent(final UserPrincipal userPrincipal, final NewTorrentRequest request) throws DuplicateException {
+    public Optional<TransmissionTorrentDto> addTorrent(final UserPrincipal userPrincipal, final NewTorrentRequest request) throws DuplicateException {
         final User user = userPrincipal.getUser();
 
         request.setDownloadDirectory(user.getDownloadDirectory());
 
         // Add the torrent to Transmission.
-        final Optional<TorrentDataDto> result = transmissionService.addTorrent(request);
+        final Optional<TransmissionTorrentDataDto> result = transmissionService.addTorrent(request);
 
         if (!result.isPresent()) {
             log.error("Failed to add a new torrent by user: {}, request: {}", user.getUsername(), request);
             return Optional.empty();
         }
 
-        final TorrentDataDto torrentData = result.get();
+        final TransmissionTorrentDataDto torrentData = result.get();
 
         // Add the new torrent to the database.
         final Optional<Torrent> savedTorrent = attachTorrentToUser(torrentData, user);
@@ -102,9 +102,9 @@ public class TorrentService {
 
         log.debug("{} added a new torrent with id: {}", user.getUsername(), torrent.getId());
 
-        final TorrentDto torrentDto = mapper.map(torrentData, TorrentDto.class);
+        final TransmissionTorrentDto transmissionTorrentDto = mapper.map(torrentData, TransmissionTorrentDto.class);
 
-        return Optional.ofNullable(torrentDto);
+        return Optional.ofNullable(transmissionTorrentDto);
     }
 
     public void deleteByUserAndId(final User user, final int id) {
@@ -116,7 +116,7 @@ public class TorrentService {
         transmissionService.removeTorrent(torrent.getId(), false);
     }
 
-    private Optional<Torrent> attachTorrentToUser(final TorrentDataDto torrentData, final User user) {
+    private Optional<Torrent> attachTorrentToUser(final TransmissionTorrentDataDto torrentData, final User user) {
         final int torrentId = torrentData.getId();
 
         final Torrent newTorrent = TorrentFactory.create(torrentId, user);

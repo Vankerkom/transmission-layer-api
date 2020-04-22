@@ -1,7 +1,7 @@
 package be.vankerkom.transmissionlayer.controllers;
 
 import be.vankerkom.transmissionlayer.exceptions.EntityNotFoundException;
-import be.vankerkom.transmissionlayer.models.dto.partials.SessionStatisticsDto;
+import be.vankerkom.transmissionlayer.models.dto.partials.TransmissionSessionStatisticsDto;
 import be.vankerkom.transmissionlayer.services.TransmissionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,7 +25,7 @@ public class SessionController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/stats")
-    public SessionStatisticsDto getSessionStats() {
+    public TransmissionSessionStatisticsDto getSessionStats() {
         return transmissionService.getSessionStats()
                 .orElseThrow(() -> new EntityNotFoundException("Could not fetch session statistics"));
     }

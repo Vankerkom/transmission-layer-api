@@ -4,7 +4,7 @@ import be.vankerkom.transmissionlayer.config.AdminConfigurationProperties;
 import be.vankerkom.transmissionlayer.factory.TorrentFactory;
 import be.vankerkom.transmissionlayer.models.Torrent;
 import be.vankerkom.transmissionlayer.models.User;
-import be.vankerkom.transmissionlayer.models.dto.partials.TorrentDto;
+import be.vankerkom.transmissionlayer.models.dto.partials.TransmissionTorrentDto;
 import be.vankerkom.transmissionlayer.repositories.TorrentRepository;
 import be.vankerkom.transmissionlayer.repositories.UserRepository;
 import be.vankerkom.transmissionlayer.services.TransmissionService;
@@ -80,7 +80,7 @@ public class ImportTorrentsToAdminComponent implements ApplicationRunner {
     }
 
     private List<Torrent> getAndMapImportedTorrents(final User user) {
-        final List<TorrentDto> torrents = transmissionService.getTorrents(Collections.singletonList("id"));
+        final List<TransmissionTorrentDto> torrents = transmissionService.getTorrents(Collections.singletonList("id"));
 
         return torrents.stream()
                 .map(t -> TorrentFactory.create(t.getId(), user))

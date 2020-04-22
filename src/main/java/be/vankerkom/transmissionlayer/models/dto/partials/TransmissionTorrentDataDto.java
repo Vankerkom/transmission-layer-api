@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class TorrentDataDto {
+public class TransmissionTorrentDataDto {
 
     private Integer id;
 

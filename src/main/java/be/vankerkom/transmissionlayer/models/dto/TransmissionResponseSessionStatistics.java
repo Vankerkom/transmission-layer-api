@@ -1,6 +1,6 @@
 package be.vankerkom.transmissionlayer.models.dto;
 
-import be.vankerkom.transmissionlayer.models.dto.partials.SessionStatisticsDto;
+import be.vankerkom.transmissionlayer.models.dto.partials.TransmissionSessionStatisticsDto;
 
-public class TransmissionResponseSessionStatistics extends TransmissionResponse<SessionStatisticsDto> {
+public class TransmissionResponseSessionStatistics extends TransmissionResponse<TransmissionSessionStatisticsDto> {
 }

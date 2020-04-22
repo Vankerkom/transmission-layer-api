@@ -6,10 +6,10 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class TorrentListDto {
+public class TransmissionTorrentListDto {
 
     @JsonProperty("torrents")
-    private List<TorrentDto> torrents;
+    private List<TransmissionTorrentDto> torrents;
 
     @JsonProperty("removed")
     private List<Integer> removed;

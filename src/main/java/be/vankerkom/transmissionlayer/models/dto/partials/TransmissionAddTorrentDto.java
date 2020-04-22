@@ -4,12 +4,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
 @Getter
-public class AddTorrentDto {
+public class TransmissionAddTorrentDto {
 
     @JsonProperty("torrent-added")
-    private TorrentDataDto torrentAdded;
+    private TransmissionTorrentDataDto torrentAdded;
 
     @JsonProperty("torrent-duplicate")
-    private TorrentDataDto duplicate;
+    private TransmissionTorrentDataDto duplicate;
 
 }

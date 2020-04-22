@@ -4,15 +4,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
 @Getter
-public class SessionStatisticsDto {
+public class TransmissionSessionStatisticsDto {
 
     private Integer activeTorrentCount;
 
     @JsonProperty("cumulative-stats")
-    private SessionStatisticsDataDto cumulative;
+    private TransmissionSessionStatisticsDataDto cumulative;
 
     @JsonProperty("current-stats")
-    private SessionStatisticsDataDto current;
+    private TransmissionSessionStatisticsDataDto current;
 
     private Long downloadSpeed;
 

@@ -2,10 +2,10 @@ package be.vankerkom.transmissionlayer.services;
 
 import be.vankerkom.transmissionlayer.exceptions.DuplicateException;
 import be.vankerkom.transmissionlayer.models.dto.*;
-import be.vankerkom.transmissionlayer.models.dto.partials.AddTorrentDto;
-import be.vankerkom.transmissionlayer.models.dto.partials.SessionStatisticsDto;
-import be.vankerkom.transmissionlayer.models.dto.partials.TorrentDataDto;
-import be.vankerkom.transmissionlayer.models.dto.partials.TorrentDto;
+import be.vankerkom.transmissionlayer.models.dto.partials.TransmissionAddTorrentDto;
+import be.vankerkom.transmissionlayer.models.dto.partials.TransmissionSessionStatisticsDto;
+import be.vankerkom.transmissionlayer.models.dto.partials.TransmissionTorrentDataDto;
+import be.vankerkom.transmissionlayer.models.dto.partials.TransmissionTorrentDto;
 import be.vankerkom.transmissionlayer.transmission.TorrentActionRequest;
 import be.vankerkom.transmissionlayer.transmission.TransmissionSessionIdInterceptor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,11 +57,11 @@ public class TransmissionService {
         return Optional.ofNullable(arguments);
     }
 
-    public List<TorrentDto> getTorrents(final List<String> fields) {
+    public List<TransmissionTorrentDto> getTorrents(final List<String> fields) {
         return getTorrents(fields, null);
     }
 
-    public List<TorrentDto> getTorrents(final List<String> fields, final Set<Integer> ids) {
+    public List<TransmissionTorrentDto> getTorrents(final List<String> fields, final Set<Integer> ids) {
         final GetTorrentsRequest request = new GetTorrentsRequest(fields, ids);
 
         final TransmissionResponseTorrents response = getResource("torrent-get", request, TransmissionResponseTorrents.class);
@@ -73,13 +73,13 @@ public class TransmissionService {
         return Collections.emptyList();
     }
 
-    public Optional<TorrentDataDto> addTorrent(final NewTorrentRequest torrentRequestData) throws DuplicateException {
+    public Optional<TransmissionTorrentDataDto> addTorrent(final NewTorrentRequest torrentRequestData) throws DuplicateException {
         final AddTorrentRequest request = new AddTorrentRequest();
 
         if (torrentRequestData.isUrl()) {
             // TODO Validate if the data is a valid torrent magnet link, else let transmission handle it.
             request.setFileName(torrentRequestData.getData());
-        }else {
+        } else {
             // TODO Validate if the data is base64.
             request.setMetaInfo(torrentRequestData.getData());
         }
@@ -93,13 +93,13 @@ public class TransmissionService {
         request.setPaused(true); // Always pause the torrent, it will be started if it's successfully stored in the db.
 
         final TransmissionResponseAddTorrent response = getResource("torrent-add", request, TransmissionResponseAddTorrent.class);
-        final AddTorrentDto arguments = response.getArguments();
+        final TransmissionAddTorrentDto arguments = response.getArguments();
 
         if (!isSuccessResponse(response) || arguments == null) {
             return Optional.empty();
         }
 
-        final TorrentDataDto duplicate = arguments.getDuplicate();
+        final TransmissionTorrentDataDto duplicate = arguments.getDuplicate();
 
         if (duplicate != null) {
             throw new DuplicateException(duplicate);
@@ -162,10 +162,10 @@ public class TransmissionService {
         }
     }
 
-    public Optional<SessionStatisticsDto> getSessionStats() {
+    public Optional<TransmissionSessionStatisticsDto> getSessionStats() {
         final TransmissionResponseSessionStatistics response = getResource("session-stats", TransmissionResponseSessionStatistics.class);
 
-        final SessionStatisticsDto statisticsDto = isSuccessResponse(response)
+        final TransmissionSessionStatisticsDto statisticsDto = isSuccessResponse(response)
                 ? response.getArguments()
                 : null;
 

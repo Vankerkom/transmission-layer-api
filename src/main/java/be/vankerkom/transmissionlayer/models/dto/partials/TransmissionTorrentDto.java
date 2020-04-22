@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
 @Getter
-public class TorrentDto extends TorrentDataDto {
+public class TransmissionTorrentDto extends TransmissionTorrentDataDto {
 
     private Integer status = 0;
 
