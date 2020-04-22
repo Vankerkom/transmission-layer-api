@@ -13,7 +13,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/torrents")
+@RequestMapping("/api/torrents")
 @RequiredArgsConstructor
 public class TorrentController {
 
