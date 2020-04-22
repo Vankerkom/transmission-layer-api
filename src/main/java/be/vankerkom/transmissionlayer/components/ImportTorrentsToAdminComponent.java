@@ -9,7 +9,7 @@ import be.vankerkom.transmissionlayer.repositories.TorrentRepository;
 import be.vankerkom.transmissionlayer.repositories.UserRepository;
 import be.vankerkom.transmissionlayer.services.TransmissionService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.annotation.Order;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @Component
 @Order(2)
 @RequiredArgsConstructor
-@Log4j2
+@Slf4j
 public class ImportTorrentsToAdminComponent implements ApplicationRunner {
 
     private final AdminConfigurationProperties adminConfigurationProperties;

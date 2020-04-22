@@ -8,7 +8,7 @@ import be.vankerkom.transmissionlayer.models.dto.partials.TorrentDataDto;
 import be.vankerkom.transmissionlayer.models.dto.partials.TorrentDto;
 import be.vankerkom.transmissionlayer.transmission.TorrentActionRequest;
 import be.vankerkom.transmissionlayer.transmission.TransmissionSessionIdInterceptor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.*;
 
 @Service
-@Log4j2
+@Slf4j
 public class TransmissionService {
 
     @Value("${transmission.url}")

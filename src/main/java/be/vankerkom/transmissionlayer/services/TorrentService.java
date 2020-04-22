@@ -11,7 +11,7 @@ import be.vankerkom.transmissionlayer.models.dto.partials.TorrentDataDto;
 import be.vankerkom.transmissionlayer.models.dto.partials.TorrentDto;
 import be.vankerkom.transmissionlayer.repositories.TorrentRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +21,7 @@ import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
-@Log4j2
+@Slf4j
 public class TorrentService {
 
     private final TransmissionService transmissionService;

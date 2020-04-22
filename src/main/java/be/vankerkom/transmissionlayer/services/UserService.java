@@ -9,7 +9,7 @@ import be.vankerkom.transmissionlayer.models.dto.NewUserDto;
 import be.vankerkom.transmissionlayer.models.dto.UserDetailsDto;
 import be.vankerkom.transmissionlayer.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -24,7 +24,7 @@ import java.util.stream.StreamSupport;
 
 @Service
 @RequiredArgsConstructor
-@Log4j2
+@Slf4j
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;

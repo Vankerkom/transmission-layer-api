@@ -4,7 +4,7 @@ import be.vankerkom.transmissionlayer.config.AdminConfigurationProperties;
 import be.vankerkom.transmissionlayer.models.User;
 import be.vankerkom.transmissionlayer.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.annotation.Order;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Order(1)
 @RequiredArgsConstructor
-@Log4j2
+@Slf4j
 public class DevelopmentAdminSeederComponent implements ApplicationRunner {
 
     private final AdminConfigurationProperties adminConfigurationProperties;
