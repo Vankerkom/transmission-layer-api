@@ -4,6 +4,7 @@ import be.vankerkom.transmissionlayer.exceptions.DuplicateException;
 import be.vankerkom.transmissionlayer.models.UserPrincipal;
 import be.vankerkom.transmissionlayer.models.dto.NewTorrentRequest;
 import be.vankerkom.transmissionlayer.models.dto.api.TorrentDto;
+import be.vankerkom.transmissionlayer.models.dto.partials.TransmissionTorrentDataDto;
 import be.vankerkom.transmissionlayer.services.TorrentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -31,9 +32,8 @@ public class TorrentController {
     }
 
     @PostMapping
-    public TorrentDto post(@AuthenticationPrincipal UserPrincipal userPrincipal, @Valid @RequestBody NewTorrentRequest request) throws DuplicateException {
+    public TransmissionTorrentDataDto post(@AuthenticationPrincipal UserPrincipal userPrincipal, @Valid @RequestBody NewTorrentRequest request) throws DuplicateException {
         return torrentService.addTorrent(userPrincipal, request)
-                .map(TorrentDto::of)
                 .orElseThrow(() -> new RuntimeException("Failed to add the torrent."));
     }
 

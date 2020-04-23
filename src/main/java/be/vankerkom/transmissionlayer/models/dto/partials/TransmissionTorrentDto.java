@@ -1,12 +1,13 @@
 package be.vankerkom.transmissionlayer.models.dto.partials;
 
+import be.vankerkom.transmissionlayer.models.dto.TorrentState;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
 @Getter
 public class TransmissionTorrentDto extends TransmissionTorrentDataDto {
 
-    private Integer status = 0;
+    private TorrentState status = TorrentState.STOPPED;
 
     private Float percentDone = 0.0f;
 

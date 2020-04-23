@@ -7,18 +7,15 @@ import be.vankerkom.transmissionlayer.models.Torrent;
 import be.vankerkom.transmissionlayer.models.User;
 import be.vankerkom.transmissionlayer.models.UserPrincipal;
 import be.vankerkom.transmissionlayer.models.dto.NewTorrentRequest;
+import be.vankerkom.transmissionlayer.models.dto.TorrentState;
 import be.vankerkom.transmissionlayer.models.dto.partials.TransmissionTorrentDataDto;
 import be.vankerkom.transmissionlayer.models.dto.partials.TransmissionTorrentDto;
 import be.vankerkom.transmissionlayer.repositories.TorrentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -35,9 +32,16 @@ public class TorrentService {
             "rateDownload", "rateUpload"
     );
 
+    private static final Set<TorrentState> SEEDING_STATES = EnumSet.of(
+            TorrentState.SEEDING, TorrentState.SEEDING_QUEUED
+    );
+
+    private static final Set<TorrentState> DOWNLOAD_STATES = EnumSet.of(
+            TorrentState.CHECK_QUEUED, TorrentState.CHECKING, TorrentState.DOWNLOAD_QUEUED, TorrentState.DOWNLOADING
+    );
+
     private final TransmissionService transmissionService;
     private final TorrentRepository torrentRepository;
-    private final ModelMapper mapper;
 
     public List<TransmissionTorrentDto> getTorrents(final UserPrincipal userPrincipal, final String filter) {
         final List<Torrent> torrents = torrentRepository.findByUser(userPrincipal.getUser());
@@ -56,15 +60,15 @@ public class TorrentService {
 
         switch (filter.toLowerCase()) {
             case "downloading":
-                torrentStream = torrentStream.filter(torrent -> torrent.getStatus() == 1 || torrent.getStatus() == 4);
+                torrentStream = torrentStream.filter(torrent -> DOWNLOAD_STATES.contains(torrent.getStatus()));
                 break;
 
             case "seeding":
-                torrentStream = torrentStream.filter(torrent -> torrent.getStatus() == 6);
+                torrentStream = torrentStream.filter(torrent -> SEEDING_STATES.contains(torrent.getStatus()));
                 break;
 
             case "inactive":
-                torrentStream = torrentStream.filter(torrent -> torrent.getStatus() == 0);
+                torrentStream = torrentStream.filter(torrent -> TorrentState.STOPPED.equals(torrent.getStatus()));
                 break;
 
             case "completed":
@@ -78,20 +82,14 @@ public class TorrentService {
         return torrentStream.collect(Collectors.toUnmodifiableList());
     }
 
-    public Optional<TransmissionTorrentDto> addTorrent(final UserPrincipal userPrincipal, final NewTorrentRequest request) throws DuplicateException {
+    public Optional<TransmissionTorrentDataDto> addTorrent(final UserPrincipal userPrincipal, final NewTorrentRequest request) throws DuplicateException {
         final User user = userPrincipal.getUser();
 
         request.setDownloadDirectory(user.getDownloadDirectory());
 
         // Add the torrent to Transmission.
-        final Optional<TransmissionTorrentDataDto> result = transmissionService.addTorrent(request);
-
-        if (!result.isPresent()) {
-            log.error("Failed to add a new torrent by user: {}, request: {}", user.getUsername(), request);
-            return Optional.empty();
-        }
-
-        final TransmissionTorrentDataDto torrentData = result.get();
+        final TransmissionTorrentDataDto torrentData = transmissionService.addTorrent(request)
+                .orElseThrow();
 
         // Add the new torrent to the database.
         final Optional<Torrent> savedTorrent = attachTorrentToUser(torrentData, user);
@@ -110,9 +108,7 @@ public class TorrentService {
 
         log.debug("{} added a new torrent with id: {}", user.getUsername(), torrent.getId());
 
-        final TransmissionTorrentDto transmissionTorrentDto = mapper.map(torrentData, TransmissionTorrentDto.class);
-
-        return Optional.ofNullable(transmissionTorrentDto);
+        return Optional.of(torrentData);
     }
 
     public void deleteByUserAndId(final User user, final int id) {
