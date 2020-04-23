@@ -2,14 +2,16 @@ package be.vankerkom.transmissionlayer.factory;
 
 import be.vankerkom.transmissionlayer.models.Torrent;
 import be.vankerkom.transmissionlayer.models.User;
+import be.vankerkom.transmissionlayer.models.dto.partials.TransmissionTorrentDataDto;
 
 public final class TorrentFactory {
 
-    public static Torrent create(final int id, final User user) {
+    public static Torrent create(TransmissionTorrentDataDto dto, User user) {
         final Torrent torrent = new Torrent();
 
-        torrent.setId(id);
+        torrent.setHash(dto.getHashString());
         torrent.setUser(user);
+        torrent.setId(dto.getId());
 
         return torrent;
     }

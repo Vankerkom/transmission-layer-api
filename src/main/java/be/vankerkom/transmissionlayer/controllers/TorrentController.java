@@ -23,8 +23,8 @@ public class TorrentController {
     private final TorrentService torrentService;
 
     @GetMapping
-    public List<TorrentDto> index(@AuthenticationPrincipal final UserPrincipal userPrincipal,
-                                  @RequestParam(name = "filter", required = false, defaultValue = "all") final String filter) {
+    public List<TorrentDto> index(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                  @RequestParam(required = false, defaultValue = "all") String filter) {
         return torrentService.getTorrents(userPrincipal, filter)
                 .stream()
                 .map(TorrentDto::of)
@@ -32,14 +32,15 @@ public class TorrentController {
     }
 
     @PostMapping
-    public TransmissionTorrentDataDto post(@AuthenticationPrincipal UserPrincipal userPrincipal, @Valid @RequestBody NewTorrentRequest request) throws DuplicateException {
+    public TransmissionTorrentDataDto post(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                           @Valid @RequestBody NewTorrentRequest request) throws DuplicateException {
         return torrentService.addTorrent(userPrincipal, request)
                 .orElseThrow(() -> new RuntimeException("Failed to add the torrent."));
     }
 
-    @DeleteMapping("/{torrentId}")
-    public void delete(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable int torrentId) {
-        torrentService.deleteByUserAndId(userPrincipal.getUser(), torrentId);
+    @DeleteMapping("/{torrentHash}")
+    public void delete(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable String torrentHash) {
+        torrentService.deleteByUserAndId(userPrincipal.getUser(), torrentHash);
     }
 
 }

@@ -3,7 +3,9 @@ package be.vankerkom.transmissionlayer.models.dto.partials;
 import be.vankerkom.transmissionlayer.models.dto.TorrentState;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import lombok.ToString;
 
+@ToString
 @Getter
 public class TransmissionTorrentDto extends TransmissionTorrentDataDto {
 

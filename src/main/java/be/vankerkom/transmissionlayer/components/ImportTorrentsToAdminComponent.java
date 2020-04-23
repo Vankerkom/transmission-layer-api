@@ -4,7 +4,6 @@ import be.vankerkom.transmissionlayer.config.AdminConfigurationProperties;
 import be.vankerkom.transmissionlayer.factory.TorrentFactory;
 import be.vankerkom.transmissionlayer.models.Torrent;
 import be.vankerkom.transmissionlayer.models.User;
-import be.vankerkom.transmissionlayer.models.dto.partials.TransmissionTorrentDto;
 import be.vankerkom.transmissionlayer.repositories.TorrentRepository;
 import be.vankerkom.transmissionlayer.repositories.UserRepository;
 import be.vankerkom.transmissionlayer.services.TransmissionService;
@@ -16,10 +15,9 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Transactional
 @Component
@@ -31,24 +29,17 @@ public class ImportTorrentsToAdminComponent implements ApplicationRunner {
     private final AdminConfigurationProperties adminConfigurationProperties;
 
     private final TransmissionService transmissionService;
-
     private final TorrentRepository torrentRepository;
-
     private final UserRepository userRepository;
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
-        if (!adminConfigurationProperties.isEnabled()) {
+    public void run(ApplicationArguments args) {
+        if (!adminConfigurationProperties.isEnabled() || torrentRepository.count() > 0) {
             return;
         }
 
-        if (torrentRepository.count() > 0) {
-            return;
-        }
-
-        final Optional<User> user = userRepository.findById(1);
-
-        user.ifPresent(this::importTorrents);
+        userRepository.findById(1)
+                .ifPresent(this::importTorrents);
     }
 
     private void importTorrents(final User user) {
@@ -56,35 +47,29 @@ public class ImportTorrentsToAdminComponent implements ApplicationRunner {
             return;
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Importing all torrents to the administrator account...");
-        }
+        log.debug("Importing all torrents to the administrator account...");
 
         final List<Torrent> importedTorrents = getAndMapImportedTorrents(user);
 
         if (importedTorrents.isEmpty()) {
-            if (log.isDebugEnabled()) {
-                log.debug("No torrents to import.");
-            }
+            log.debug("No torrents to import.");
             return;
         }
 
-        final Long savedTorrentsCount = torrentRepository.saveAll(importedTorrents).spliterator().getExactSizeIfKnown();
+        final Long savedTorrentsCount = torrentRepository.saveAll(importedTorrents)
+                .spliterator()
+                .getExactSizeIfKnown();
 
         userRepository.save(user);
 
-        if (log.isDebugEnabled()) {
-            log.debug("Imported {} torrents.", savedTorrentsCount);
-        }
-
+        log.debug("Imported {} torrents.", savedTorrentsCount);
     }
 
-    private List<Torrent> getAndMapImportedTorrents(final User user) {
-        final List<TransmissionTorrentDto> torrents = transmissionService.getTorrents(Collections.singletonList("id"));
-
-        return torrents.stream()
-                .map(t -> TorrentFactory.create(t.getId(), user))
-                .collect(Collectors.toList());
+    private List<Torrent> getAndMapImportedTorrents(User user) {
+        return transmissionService.getTorrents(List.of("id", "hashString"))
+                .stream()
+                .map(torrent -> TorrentFactory.create(torrent, user))
+                .collect(toList());
     }
 
 }

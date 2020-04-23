@@ -111,9 +111,9 @@ public class TorrentService {
         return Optional.of(torrentData);
     }
 
-    public void deleteByUserAndId(final User user, final int id) {
-        final Torrent torrent = torrentRepository.findByUserAndId(user, id)
-                .orElseThrow(() -> new EntityNotFoundException("Torrent with id: " + id + " not found"));
+    public void deleteByUserAndId(User user, String hash) {
+        final Torrent torrent = torrentRepository.findByUserAndHash(user, hash)
+                .orElseThrow(() -> new EntityNotFoundException("Torrent with hash: " + hash + " not found"));
 
         torrentRepository.delete(torrent);
 
@@ -121,14 +121,12 @@ public class TorrentService {
     }
 
     private Optional<Torrent> attachTorrentToUser(final TransmissionTorrentDataDto torrentData, final User user) {
-        final int torrentId = torrentData.getId();
-
-        final Torrent newTorrent = TorrentFactory.create(torrentId, user);
+        final Torrent newTorrent = TorrentFactory.create(torrentData, user);
 
         try {
             return Optional.of(torrentRepository.save(newTorrent));
         } catch (Exception e) {
-            log.error("Failed to attach torrentId: {} to user: {}", torrentId, user, e);
+            log.error("Failed to attach torrent:{} to user: {}", newTorrent, user, e);
             return Optional.empty();
         }
     }
