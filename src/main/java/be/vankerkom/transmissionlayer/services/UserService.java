@@ -101,7 +101,7 @@ public class UserService implements UserDetailsService {
         final User user = userRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
 
-        editUserRequest.getDownloadDirectory()
+        Optional.ofNullable(editUserRequest.getDownloadDirectory())
                 .ifPresent(user::setDownloadDirectory);
 
         return mapper.map(userRepository.save(user), UserDetailsDto.class);
