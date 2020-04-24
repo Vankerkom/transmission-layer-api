@@ -3,6 +3,7 @@ package be.vankerkom.transmissionlayer.controllers;
 import be.vankerkom.transmissionlayer.exceptions.DuplicateException;
 import be.vankerkom.transmissionlayer.models.UserPrincipal;
 import be.vankerkom.transmissionlayer.models.dto.NewTorrentRequest;
+import be.vankerkom.transmissionlayer.models.dto.UpdateTorrentRequest;
 import be.vankerkom.transmissionlayer.models.dto.api.TorrentDto;
 import be.vankerkom.transmissionlayer.models.dto.partials.TransmissionTorrentDataDto;
 import be.vankerkom.transmissionlayer.services.TorrentService;
@@ -40,7 +41,7 @@ public class TorrentController {
 
     @PatchMapping("/{hash}")
     public void updateTorrent(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable String hash,
-                              @Valid @RequestBody NewTorrentRequest request) {
+                              @Valid @RequestBody UpdateTorrentRequest request) {
         torrentService.updateTorrent(userPrincipal.getUser(), hash, request);
     }
 

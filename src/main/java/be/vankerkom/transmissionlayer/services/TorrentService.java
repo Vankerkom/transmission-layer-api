@@ -7,7 +7,9 @@ import be.vankerkom.transmissionlayer.models.Torrent;
 import be.vankerkom.transmissionlayer.models.User;
 import be.vankerkom.transmissionlayer.models.UserPrincipal;
 import be.vankerkom.transmissionlayer.models.dto.NewTorrentRequest;
+import be.vankerkom.transmissionlayer.models.dto.StateUpdate;
 import be.vankerkom.transmissionlayer.models.dto.TorrentState;
+import be.vankerkom.transmissionlayer.models.dto.UpdateTorrentRequest;
 import be.vankerkom.transmissionlayer.models.dto.partials.TransmissionTorrentDataDto;
 import be.vankerkom.transmissionlayer.models.dto.partials.TransmissionTorrentDto;
 import be.vankerkom.transmissionlayer.repositories.TorrentRepository;
@@ -142,11 +144,20 @@ public class TorrentService {
                 .collect(Collectors.toSet());
     }
 
-    public Optional<Torrent> updateTorrent(User user, String hash, NewTorrentRequest request) {
+    public Optional<Torrent> updateTorrent(User user, String hash, UpdateTorrentRequest request) {
         final Torrent torrent = getTorrentByUserAndHash(user, hash);
 
-        // TODO Add status updating support.
+        Optional.ofNullable(request.getState())
+                .ifPresent(state -> startOrStopTorrent(torrent.getId(), state));
 
         return Optional.empty();
+    }
+
+    private void startOrStopTorrent(int id, StateUpdate state) {
+        if (StateUpdate.START.equals(state)) {
+            transmissionService.startTorrent(id);
+        } else {
+            transmissionService.stopTorrent(id);
+        }
     }
 }

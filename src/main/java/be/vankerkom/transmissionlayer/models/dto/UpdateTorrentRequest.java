@@ -7,6 +7,6 @@ import lombok.ToString;
 @Getter
 public class UpdateTorrentRequest {
 
-    private TorrentState state;
+    private StateUpdate state;
 
 }
