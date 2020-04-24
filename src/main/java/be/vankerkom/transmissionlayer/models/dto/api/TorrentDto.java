@@ -26,7 +26,7 @@ public class TorrentDto {
 
     public static TorrentDto of(TransmissionTorrentDto torrent) {
         return TorrentDto.builder()
-                .id(0)
+                .id(torrent.getId())
                 .hashString(torrent.getHashString())
                 .name(torrent.getName())
                 .state(torrent.getStatus())

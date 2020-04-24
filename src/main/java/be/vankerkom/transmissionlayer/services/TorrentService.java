@@ -94,7 +94,7 @@ public class TorrentService {
         // Add the new torrent to the database.
         final Optional<Torrent> savedTorrent = attachTorrentToUser(torrentData, user);
 
-        if (!savedTorrent.isPresent()) {
+        if (savedTorrent.isEmpty()) {
             // If saving the torrent data to the database fails, remove all contents of it from the transmission instance.
             transmissionService.removeTorrent(torrentData.getId(), true);
 
@@ -112,12 +112,16 @@ public class TorrentService {
     }
 
     public void deleteByUserAndId(User user, String hash) {
-        final Torrent torrent = torrentRepository.findByUserAndHash(user, hash)
-                .orElseThrow(() -> new EntityNotFoundException("Torrent with hash: " + hash + " not found"));
+        final Torrent torrent = getTorrentByUserAndHash(user, hash);
 
         torrentRepository.delete(torrent);
 
         transmissionService.removeTorrent(torrent.getId(), false);
+    }
+
+    private Torrent getTorrentByUserAndHash(User user, String hash) {
+        return torrentRepository.findByUserAndHash(user, hash)
+                .orElseThrow(() -> new EntityNotFoundException("Torrent with hash: " + hash + " not found"));
     }
 
     private Optional<Torrent> attachTorrentToUser(final TransmissionTorrentDataDto torrentData, final User user) {
@@ -138,4 +142,11 @@ public class TorrentService {
                 .collect(Collectors.toSet());
     }
 
+    public Optional<Torrent> updateTorrent(User user, String hash, NewTorrentRequest request) {
+        final Torrent torrent = getTorrentByUserAndHash(user, hash);
+
+        // TODO Add status updating support.
+
+        return Optional.empty();
+    }
 }

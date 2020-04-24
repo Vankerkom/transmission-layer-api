@@ -38,9 +38,15 @@ public class TorrentController {
                 .orElseThrow(() -> new RuntimeException("Failed to add the torrent."));
     }
 
-    @DeleteMapping("/{torrentHash}")
-    public void delete(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable String torrentHash) {
-        torrentService.deleteByUserAndId(userPrincipal.getUser(), torrentHash);
+    @PatchMapping("/{hash}")
+    public void updateTorrent(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable String hash,
+                              @Valid @RequestBody NewTorrentRequest request) {
+        torrentService.updateTorrent(userPrincipal.getUser(), hash, request);
+    }
+
+    @DeleteMapping("/{hash}")
+    public void delete(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable String hash) {
+        torrentService.deleteByUserAndId(userPrincipal.getUser(), hash);
     }
 
 }
