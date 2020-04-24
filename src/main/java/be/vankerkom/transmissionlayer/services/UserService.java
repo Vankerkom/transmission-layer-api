@@ -35,7 +35,7 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(final String username) {
-        return userRepository.findByUsername(username)
+        return userRepository.findByUsernameIgnoreCase(username)
                 .map(UserPrincipal::new)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
     }
@@ -74,7 +74,7 @@ public class UserService implements UserDetailsService {
 
     public Optional<UserDetailsDto> create(final NewUserDto newUserDto) throws DuplicateException {
         final String username = newUserDto.getUsername();
-        final Optional<User> existingUser = userRepository.findByUsername(username);
+        final Optional<User> existingUser = userRepository.findByUsernameIgnoreCase(username);
 
         if (existingUser.isPresent()) {
             throw new DuplicateException("A user with username: \'" + username + "\' already exists");
