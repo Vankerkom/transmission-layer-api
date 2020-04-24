@@ -1,9 +1,9 @@
 package be.vankerkom.transmissionlayer.models;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @NoArgsConstructor
-@EqualsAndHashCode
+@ToString
 @Table(indexes = {
         @Index(name = "torrent_id_index", columnList = "user_id,id")
 })
@@ -23,6 +23,7 @@ public class Torrent {
     private String hash;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ToString.Exclude()
     private User user;
 
     @NotNull
