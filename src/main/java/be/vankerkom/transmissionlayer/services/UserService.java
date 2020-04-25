@@ -1,5 +1,6 @@
 package be.vankerkom.transmissionlayer.services;
 
+import be.vankerkom.transmissionlayer.exceptions.CannotEditUserException;
 import be.vankerkom.transmissionlayer.exceptions.DuplicateException;
 import be.vankerkom.transmissionlayer.exceptions.EntityNotFoundException;
 import be.vankerkom.transmissionlayer.models.User;
@@ -97,14 +98,27 @@ public class UserService implements UserDetailsService {
         return Optional.empty();
     }
 
-    public UserDetailsDto editUser(final int id, final EditUserDto editUserRequest) {
+    public UserDetailsDto editUser(User editor, int id, EditUserDto editUserRequest) {
         final User user = userRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
+
+        if (!canEditUser(editor, user, editUserRequest.getPassword())) {
+            throw new CannotEditUserException(id);
+        }
+
+        Optional.ofNullable(editUserRequest.getNewPassword())
+                .map(passwordEncoder::encode)
+                .ifPresent(user::setPassword);
 
         Optional.ofNullable(editUserRequest.getDownloadDirectory())
                 .ifPresent(user::setDownloadDirectory);
 
         return mapper.map(userRepository.save(user), UserDetailsDto.class);
+    }
+
+    private boolean canEditUser(User editor, User user, String password) {
+        return editor.isAdmin()
+                || (editor.getId() == user.getId() && passwordEncoder.matches(password, user.getPassword()));
     }
 
 }

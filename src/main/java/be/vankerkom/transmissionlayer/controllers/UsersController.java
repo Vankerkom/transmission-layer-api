@@ -2,6 +2,7 @@ package be.vankerkom.transmissionlayer.controllers;
 
 import be.vankerkom.transmissionlayer.exceptions.DuplicateException;
 import be.vankerkom.transmissionlayer.exceptions.EntityNotFoundException;
+import be.vankerkom.transmissionlayer.models.UserPrincipal;
 import be.vankerkom.transmissionlayer.models.dto.EditUserDto;
 import be.vankerkom.transmissionlayer.models.dto.NewUserDto;
 import be.vankerkom.transmissionlayer.models.dto.UserDetailsDto;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -49,10 +51,11 @@ public class UsersController {
                 .body(userDetails);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PutMapping("/{id}")
-    public UserDetailsDto edit(@PathVariable final int id, @Valid @RequestBody EditUserDto editUserRequest) {
-        return userService.editUser(id, editUserRequest);
+    @PreAuthorize("hasRole('ROLE_ADMIN') or #id == authentication.principal.user.id")
+    @PatchMapping("/{id}")
+    public UserDetailsDto edit(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable int id,
+                               @Valid @RequestBody EditUserDto editUserRequest) {
+        return userService.editUser(userPrincipal.getUser(), id, editUserRequest);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
