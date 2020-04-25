@@ -113,12 +113,12 @@ public class TorrentService {
         return Optional.of(torrentData);
     }
 
-    public void deleteByUserAndId(User user, String hash) {
+    public void deleteByUserAndId(User user, String hash, boolean deleteLocalContent) {
         final Torrent torrent = getTorrentByUserAndHash(user, hash);
 
         torrentRepository.delete(torrent);
 
-        transmissionService.removeTorrent(torrent.getId(), false);
+        transmissionService.removeTorrent(torrent.getId(), deleteLocalContent);
     }
 
     private Torrent getTorrentByUserAndHash(User user, String hash) {

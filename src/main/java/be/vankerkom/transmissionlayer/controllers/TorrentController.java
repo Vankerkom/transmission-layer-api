@@ -46,8 +46,9 @@ public class TorrentController {
     }
 
     @DeleteMapping("/{hash}")
-    public void delete(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable String hash) {
-        torrentService.deleteByUserAndId(userPrincipal.getUser(), hash);
+    public void delete(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable String hash,
+                       @RequestParam(defaultValue = "false") boolean hard) {
+        torrentService.deleteByUserAndId(userPrincipal.getUser(), hash, hard);
     }
 
 }
