@@ -1,12 +1,15 @@
 package be.vankerkom.transmissionlayer.models.dto;
 
 import lombok.Getter;
-import org.apache.logging.log4j.core.config.plugins.validation.constraints.Required;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Getter
 public class TransmissionRequest<T> {
 
-    @Required
+    @NotNull
+    @NotEmpty
     private String method;
 
     // Optional

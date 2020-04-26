@@ -1,15 +1,17 @@
 package be.vankerkom.transmissionlayer.models.dto;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.core.config.plugins.validation.constraints.Required;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
 public class TransmissionResponse<T> {
 
     private static final String SUCCESS_RESULT_VALUE = "success";
 
-    @Required
+    @NotNull
+    @NotEmpty
     private String result;
 
     // Optional
