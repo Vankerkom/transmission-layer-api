@@ -12,9 +12,8 @@ import org.springframework.context.annotation.Configuration;
 public class AdminConfigurationProperties {
 
     private String username = "";
-
     private String password = "";
-
     private boolean enabled = false;
+    private boolean importTorrents = false;
 
 }

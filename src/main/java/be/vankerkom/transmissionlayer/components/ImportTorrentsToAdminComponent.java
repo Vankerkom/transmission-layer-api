@@ -34,7 +34,7 @@ public class ImportTorrentsToAdminComponent implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        if (!adminConfigurationProperties.isEnabled() || torrentRepository.count() > 0) {
+        if (!adminConfigurationProperties.isEnabled() || !adminConfigurationProperties.isImportTorrents() || torrentRepository.count() > 0) {
             return;
         }
 
